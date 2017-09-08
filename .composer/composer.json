@@ -1,0 +1,10 @@
+{
+    "require": {
+        "d11wtq/boris": "^1.0",
+        "psy/psysh": "dev-develop",
+        "phpstan/phpstan": "^0.7.0",
+        "squizlabs/php_codesniffer": "*",
+        "phpmd/phpmd": "^2.6",
+        "mihaeu/test-generator": "^1.0"
+    }
+}
