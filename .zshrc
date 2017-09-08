@@ -111,6 +111,8 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+source ~/.nix-profile/etc/profile.d/nix.sh
+
 source /home/mike/opt/todo.txt_cli-2.9/todo_completion
 alias t=/home/mike/opt/todo.txt_cli-2.9/todo.sh -d /home/mike/opt/todo.txt_cli-2.9/todo.cfg
 
