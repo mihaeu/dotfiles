@@ -21,6 +21,15 @@ POWERLEVEL9K_BATTERY_ICON=$'\u26A1'
 POWERLEVEL9K_MODE='nerdfont-complete'
 POWERLEVEL9K_STATUS_VERBOSE=false
 
+function mkcd() {
+    local -r dir="$1"
+    if [[ -z "$dir" || -d "$dir" ]]; then
+        echo "Please provide a directory which doesn't already exist."
+        exit 1
+    fi
+    mkdir -p "$dir" && cd "$dir"
+}
+
 function cleanTimesheet() {
     file="$1"
     if [[ ! -e "$file"  ]]
@@ -122,6 +131,7 @@ alias dev="git checkout develop"
 alias pages="git checkout gh-pages"
 
 alias tree="tree -C"
+alias le="exa -al"
 
 # PHP aliases
 alias php56="/home/mike/opt/php-5.6.29/bin/php"
