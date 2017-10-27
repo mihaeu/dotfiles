@@ -18,7 +18,7 @@ POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status battery time)
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 POWERLEVEL9K_BATTERY_ICON=$'\u26A1'
-POWERLEVEL9K_MODE='awesome-fontconfig'
+POWERLEVEL9K_MODE='nerdfont-complete'
 POWERLEVEL9K_STATUS_VERBOSE=false
 
 function cleanTimesheet() {
@@ -82,8 +82,7 @@ plugins=(git zsh-syntax-highlighting)
 # User configuration
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
-# export MANPATH="/usr/local/man:$MANPATH"
-
+source ~/.nix-profile/etc/profile.d/nix.sh
 source $ZSH/oh-my-zsh.sh
 
 # You may need to manually set your language environment
@@ -111,10 +110,6 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-source ~/.nix-profile/etc/profile.d/nix.sh
-
-source /home/mike/opt/todo.txt_cli-2.9/todo_completion
-alias t=/home/mike/opt/todo.txt_cli-2.9/todo.sh -d /home/mike/opt/todo.txt_cli-2.9/todo.cfg
 
 # git aliases
 alias g=git
