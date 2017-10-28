@@ -34,6 +34,7 @@ function ensureNixIsInstalled() {
     if ! type "nix-env" > /dev/null 2&>1; then
     	_info "Installing zsh ..."
         curl https://nixos.org/nix/install | sh
+	source $HOME/.nix-profile/etc/profile.d/nix.sh
     else
     	_success "nix is already installed"
     fi
