@@ -30,8 +30,8 @@ function _color_log() {
 }
 
 function ensureNixIsInstalled() {
-	_info "Checking if nix is installed ..."
-    if ! type "nix-env" > /dev/null; then
+    _info "Checking if nix is installed ..."
+    if ! type "nix-env" > /dev/null 2&>1; then
     	_info "Installing zsh ..."
         curl https://nixos.org/nix/install | sh
     else
