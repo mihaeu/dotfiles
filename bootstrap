@@ -4,118 +4,175 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+NIX_BIN="$HOME/.nix-profile/bin"
+DOTFILES_DIR="$HOME/dotfiles"
+
 function _success() {
-	TEXT="$1"
-	GREEN='\033[0;32m'
-	_color_log "${GREEN}" "${TEXT}"
+    TEXT="$1"
+    GREEN="\033[0;32m"
+    _color_log "${GREEN}" "${TEXT}"
 }
 
 function _info() {
-	TEXT="$1"
-	ORANGE='\033[0;33m'
-	_color_log "${ORANGE}" "${TEXT}"
+    TEXT="$1"
+    ORANGE="\033[0;33m"
+    _color_log "${ORANGE}" "${TEXT}"
 }
 
 function _error() {
-	TEXT="$1"
-	RED='\033[0;31m'
-	_color_log "${RED}" "${TEXT}"
+    TEXT="$1"
+    RED="\033[0;31m"
+    _color_log "${RED}" "${TEXT}"
+}
+
+function _fail() {
+    TEXT="${1}"
+    _fail "$TEXT"
+    exit 1
 }
 
 function _color_log() {
-	COLOR="$1"
-	TEXT="$2"
-	NO_COLOR='\033[0m'
-	echo -e "${COLOR}${TEXT}${NO_COLOR}"
+    COLOR="$1"
+    TEXT="$2"
+    NO_COLOR="\033[0m"
+    echo -e "${COLOR}${TEXT}${NO_COLOR}"
 }
 
 function ensureNixIsInstalled() {
     _info "Checking if nix is installed ..."
-    if ! type "nix-env" > /dev/null 2&>1; then
-    	_info "Installing zsh ..."
+    if [[ ! -d "$HOME/.nix-profile" ]]; then
+        _info "Installing nix ..."
+        type "curl" > /dev/null || _fail "You don't have curl installed, aborting ..."
+    _info "Using curl ..."
         curl https://nixos.org/nix/install | sh
-	source $HOME/.nix-profile/etc/profile.d/nix.sh
     else
-    	_success "nix is already installed"
+        _success "nix is already installed"
+    fi
+    source "$HOME/.nix-profile/etc/profile.d/nix.sh"
+}
+
+
+function ensureGitIsInstalled() {
+    _info "Checking if git is installed ..."
+    if ! type "git" > /dev/null; then
+        _info "Installing git ..."
+        nix-env -i git
+    else
+       _success "Git is already installed ..."
     fi
 }
 
+function findMissingNixDependencies() {
+    echo $(diff <("$NIX_BIN/nix-env" -q | sed -r 's/\-[0-9\.]*$//g' | sort)  <(sed -r 's/\-[0-9\.]*$//' "$DOTFILES_DIR/nix-dependencies" | sort) | grep '> ' | sed -e 's/> //g')
+}
+
 function installNixDependencies() {
-	_info "Installing nix dependencies ..."
-	nix-env --install $(sed -r 's/\-.*//' | sed -e '/nix/d' | xargs)
+    _info "Installing nix dependencies ..."
+    MISSING_DEPENDENCIES=$(findMissingNixDependencies)
+    if [[ ! -z "$MISSING_DEPENDENCIES" ]]; then
+        nix-env --install "$MISSING_DEPENDENCIES"
+    else
+        _success "Nothing to install ..."
+    fi
 }
 
 function ensureZshIsDefaultShell() {
-	_info "Checking if zsh is the default shell ..."
-	if ! grep /etc/shells; then
-		_info "Adding zsh to shells and set as default ..."
-		echo "$(which zsh)" | sudo tee -a /etc/shells
-		chsh -s "$(which zsh)"
-	else
-		_success "zsh is already the default"
-	fi
+    _info "Checking if zsh is the default shell ..."
+    if ! grep zsh /etc/shells >/dev/null; then
+        which zsh | sudo tee -a /etc/shells
+    fi
+    if ! grep $(whoami) /etc/passwd | grep zsh > /dev/null; then
+        _info "Adding zsh to shells and set as default ..."
+        chsh -s "$(which zsh)"
+    else
+        _success "zsh is already the default"
+    fi
 }
 
 function installOrUpdateOhMyZsh() {
-  	if [[ -d "$HOME/.oh-my-zsh" ]]; then
-		_info "Updating oh-my-zsh ..."
-    	git --git-dir="$HOME/.oh-my-zsh/.git" --work-tree="$HOME/.oh-my-zsh" pull
-  	else
-  		_info "Installing oh-my-zsh ..."
-		curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh
-  	fi
+      if [[ -d "$HOME/.oh-my-zsh/.git" ]]; then
+        _info "Updating oh-my-zsh ..."
+        "$NIX_BIN/git" --git-dir="$HOME/.oh-my-zsh/.git" --work-tree="$HOME/.oh-my-zsh" pull
+      elif [[ -d "$HOME/.oh-my-zsh" ]]; then 
+          _fail ".oh-my-zsh directory exists, but is not a git directory ..."
+      else
+         _info "Installing oh-my-zsh ..."
+        curl https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sh
+      fi
 }
 
 function ensurePatchedFontsAreInstalled() {
-	_info "Installing patched fonts ..."
-	pullOrUpdateGitDependency "git@github.com:ryanoasis/nerd-fonts.git" "$HOME/.oh-my-zsh/custom/themes/patched-fonts"
-	$HOME/.oh-my-zsh/custom/themes/patched-fonts/install.sh
+    _info "Installing patched fonts ..."
+    pullOrUpdateGitDependency "https://github.com/ryanoasis/nerd-fonts.git" "$HOME/.oh-my-zsh/custom/themes/patched-fonts"
+    "$HOME/.oh-my-zsh/custom/themes/patched-fonts/install.sh" || true
+}
+
+
+function linkDotfiles() {
+    [[ -f "$HOME/.zshrc" ]] && mv "$HOME/.zshrc" "$HOME/.zshrc_before_bootstrap"
+    ln -s "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
+
+    [[ -d "$HOME/.config/terminator" ]] || mkdir -p "$HOME/.config/terminator"
+    ln -s "$DOTFILES_DIR/.config/terminator/config" "$HOME/.config/terminator/config"
 }
 
 function pullOrUpdateGitDependency() {
-	REPO_DIR=${1}
-	REPO_URL=${2}
-	if [[ -d "$REPO_DIR" ]]; then
-		_info "Updating ${REPO_DIR} ..."
-    	git --git-dir="$REPO_DIR/.git" --work-tree="$REPO_DIR" pull
-  	else
-  		_info "Pulling ${REPO_URL} ..."
-		git clone "$REPO_URL" "$REPO_DIR"
-  	fi
+    REPO_URL="${1}"
+    REPO_DIR="${2}"
+    if [[ -d "$REPO_DIR" ]]; then
+        _info "Updating ${REPO_DIR} ..."
+        git --git-dir="$REPO_DIR/.git" --work-tree="$REPO_DIR" pull
+      else
+          _info "Pulling from ${REPO_URL} ..."
+        git clone "$REPO_URL" "$REPO_DIR"
+      fi
 }
 
 function installOrUpdateComposerDependencies() {
-	_error "installOrUpdateComposerDependencies not yet implemented"
+    _error "installOrUpdateComposerDependencies not yet implemented"
 }
+
 function installOrUpdatePhpDependencies() {
-	_error "installOrUpdatePhpDependencies not yet implemented"
+    _error "installOrUpdatePhpDependencies not yet implemented"
 }
+
 function installOrUpdateNodeDependencies() {
-	_error "installOrUpdateNodeDependencies not yet implemented"
+    _error "installOrUpdateNodeDependencies not yet implemented"
 }
+
 function installOrUpdateRubyDependencies() {
-	_error "installOrUpdateRubyDependencies not yet implemented"
+    _error "installOrUpdateRubyDependencies not yet implemented"
 }
+
 function installOrUpdatePythonDependencies() {
-	_error "installOrUpdatePythonDependencies not yet implemented"
+    _error "installOrUpdatePythonDependencies not yet implemented"
 }
+
 function installOrUpdateGoDependencies() {
-	_error "installOrUpdateGoDependencies not yet implemented"
+    _error "installOrUpdateGoDependencies not yet implemented"
 }
 
 function main() {
     ensureNixIsInstalled
+    ensureGitIsInstalled
+    pullOrUpdateGitDependency "https://github.com/mihaeu/dotfiles" "$DOTFILES_DIR"
+    cd "$DOTFILES_DIR"
     installNixDependencies
     ensureZshIsDefaultShell
     installOrUpdateOhMyZsh
     ensurePatchedFontsAreInstalled
-    pullOrUpdateGitDependency "git@github.com:bhilburn/powerlevel9k.git" "$HOME/.oh-my-zsh/custom/themes/powerlevel9k"
+    pullOrUpdateGitDependency "https://github.com/bhilburn/powerlevel9k" "$HOME/.oh-my-zsh/custom/themes/powerlevel9k"
+    linkDotfiles
     installOrUpdateComposerDependencies
     installOrUpdatePhpDependencies
     installOrUpdateNodeDependencies
     installOrUpdateRubyDependencies
     installOrUpdatePythonDependencies
     installOrUpdateGoDependencies
+
+    _success "=================================================="
+    _success "= All done, time to switch over to terminator    ="
+    _success "=================================================="
 }
 
 main
