@@ -1,5 +1,5 @@
 # Path to your oh-my-zsh installation.
-export ZSH=/home/mike/.oh-my-zsh
+export ZSH="$HOME/.oh-my-zsh"
 
 #if [ -f `which powerline-daemon`  ]; then
 #    powerline-daemon -q
@@ -119,7 +119,6 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-
 # git aliases
 alias g=git
 alias gs="git status"
@@ -133,56 +132,29 @@ alias pages="git checkout gh-pages"
 alias tree="tree -C"
 alias le="exa -al"
 
-# PHP aliases
-alias php56="/home/mike/opt/php-5.6.29/bin/php"
-
-# composer aliases
-alias co="php -n /home/mike/opt/composer"
-alias coi="php -n /home/mike/opt/composer install"
-alias cou="php -n /home/mike/opt/composer update"
-
 alias c=clear
 alias ccat='pygmentize -O style=monokai -f console256 -g'
 
-# dePHPend aliases
-
-alias de="php -n /home/mike/workspace/dephpend/bin/dephpend"
-
 # php aliases
-alias php71=/home/mike/opt/php-7.1/bin/php
 alias p=phpunit
 alias pcov="phpunit --coverage-text --colors"
 
 alias m=make
 
 alias server="ssh root@78.47.124.92"
-alias kodi="ssh 'osmc@192.168.1.106'"
 
 # folder aliases
-alias dl="cd /home/mike/Downloads/"
-alias work="/home/mike/workspace/"
-alias mvi="cd /home/mike/Dropbox/Documents/Studies/MA\ Ro/MVI2/Uebungen/"
-alias ma="cd /home/mike/Dropbox/Documents/Studies/MA\ Ro/Master\ Arbeit/"
-alias ms="cd /home/mike/Dropbox/Documents/Studies/MA\ Ro/Master\ Seminar/"
-alias sti="cd /home/mike/Dropbox/Documents/Studies/MA\ Ro/STI/"
+alias dl="cd $HOME/Downloads/"
+alias work="$HOME/workspace/"
 
 alias weather="curl -4 http://wttr.in/Munich"
 alias xclip="xclip -selection c"
 alias xpaste="xclip -o"
 alias battery="upower -i /org/freedesktop/UPower/devices/battery_BAT0"
 
-export JDK_HOME="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.111-1.b16.fc23.x86_64"
-export JAVA_HOME=$JDK_HOME
-export GRADLE_HOME=/usr/share/gradle
-export GOROOT="/home/mike/opt/go"
-export GOPATH="/home/mike/.go"
-export PATH=$PATH:/home/mike/bin:/usr/local/go/bin:/usr/local/php7.0.0/bin/:/home/mike/opt/anaconda3/bin:/home/mike/.composer/vendor/bin:/home/mike/opt/php7/bin:$GOROOT/bin:$HOME/.yarn/bin
+export PATH=$PATH:$HOME/bin:/usr/local/go/bin:$HOME/.composer/vendor/bin:$GOROOT/bin:$HOME/.yarn/bin
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/home/mike/.sdkman"
-[[ -s "/home/mike/.sdkman/bin/sdkman-init.sh" ]] && source "/home/mike/.sdkman/bin/sdkman-init.sh"
-
-export NVM_DIR="/home/mike/.nvm"
+export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
