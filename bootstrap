@@ -70,7 +70,7 @@ function installNixDependencies() {
     _info "Installing nix dependencies ..."
     MISSING_DEPENDENCIES=$(findMissingNixDependencies)
     if [[ ! -z "$MISSING_DEPENDENCIES" ]]; then
-        nix-env --install "$MISSING_DEPENDENCIES"
+        nix-env --install $MISSING_DEPENDENCIES
     else
         _success "Nothing to install ..."
     fi
