@@ -94,6 +94,8 @@ export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/g
 source ~/.nix-profile/etc/profile.d/nix.sh
 source $ZSH/oh-my-zsh.sh
 
+source $HOME/.nix-profile/**/autojump.sh
+
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
