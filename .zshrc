@@ -128,11 +128,10 @@ alias gc="git commit -v"
 alias standup="g lg | ag 'hours' --nocolor"
 alias lastweek="g lg | ag '(hours)|([1-7] days)' --nocolor"
 
-alias dev="git checkout develop"
-alias pages="git checkout gh-pages"
-
+alias vi="nvim"
 alias tree="tree -C"
 alias le="exa -al"
+alias t="todo.sh"
 
 alias c=clear
 alias ccat='pygmentize -O style=monokai -f console256 -g'
