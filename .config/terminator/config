@@ -1,4 +1,5 @@
 [global_config]
+  enabled_plugins = LaunchpadCodeURLHandler, APTURLHandler, LaunchpadBugURLHandler
   title_hide_sizetext = True
   window_state = maximise
 [keybindings]
@@ -15,9 +16,8 @@
   [[default]]
     background_darkness = 0.92
     background_image = None
-    background_type = transparent
     cursor_color = "#ffffff"
-    font = BitstreamVeraSansMono Nerd Font 12
+    font = FuraMono Nerd Font 12
     foreground_color = "#ffffff"
     scrollback_infinite = True
     scrollbar_position = hidden

@@ -132,6 +132,7 @@ alias vi="nvim"
 alias tree="tree -C"
 alias le="exa -al"
 alias t="todo.sh"
+alias keysync="$HOME/.gnupg/keysync.sh"
 
 alias c=clear
 alias ccat='pygmentize -O style=monokai -f console256 -g'
@@ -155,10 +156,13 @@ alias xclip="xclip -selection c"
 alias xpaste="xclip -o"
 alias battery="upower -i /org/freedesktop/UPower/devices/battery_BAT0"
 
-export PATH=$PATH:$HOME/bin:/usr/local/go/bin:$HOME/.composer/vendor/bin:$GOROOT/bin:$HOME/.yarn/bin
+export PATH=$PATH:$HOME/bin:$HOME/.local/bin:/usr/local/go/bin:$HOME/.composer/vendor/bin:$GOROOT/bin:$HOME/.yarn/bin:$HOME/.pyenv/bin
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+source "$HOME/.php-version/php-version.sh"
+php-version 7
