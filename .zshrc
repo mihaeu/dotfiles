@@ -156,7 +156,7 @@ alias xclip="xclip -selection c"
 alias xpaste="xclip -o"
 alias battery="upower -i /org/freedesktop/UPower/devices/battery_BAT0"
 
-export PATH=$PATH:$HOME/bin:$HOME/.local/bin:/usr/local/go/bin:$HOME/.composer/vendor/bin:$GOROOT/bin:$HOME/.yarn/bin:$HOME/.pyenv/bin
+export PATH=$PATH:$HOME/bin:$HOME/.local/bin:/usr/local/go/bin:$HOME/.composer/vendor/bin:$GOROOT/bin:$HOME/.yarn/bin:$HOME/.pyenv/bin:$HOME/.gem/ruby/2.4.0/bin/
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm

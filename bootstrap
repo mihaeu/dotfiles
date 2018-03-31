@@ -165,6 +165,7 @@ function main() {
     installOrUpdateOhMyZsh
     ensurePatchedFontsAreInstalled
     pullOrUpdateGitDependency "https://github.com/bhilburn/powerlevel9k" "$HOME/.oh-my-zsh/custom/themes/powerlevel9k"
+    pullOrUpdateGitDependency "https://github.com/zsh-users/zsh-syntax-highlighting"  "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
     linkDotfiles
     installOrUpdateComposerDependencies
     installOrUpdatePhpDependencies
