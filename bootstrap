@@ -113,10 +113,10 @@ function linkDotfiles() {
     ln -s "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 
     [[ -d "$HOME/.config/terminator" ]] || mkdir -p "$HOME/.config/terminator"
-    ln -s "$DOTFILES_DIR/.config/terminator/config" "$HOME/.config/terminator/config"
+    [[ -f "$DOTFILES_DIR/.config/terminator/config" ]] || ln -s "$DOTFILES_DIR/.config/terminator/config" "$HOME/.config/terminator/config"
 
     [[ -d "$HOME/.todo/config" ]] || mkdir -p "$HOME/.todo"
-    ln -s "$DOTFILES_DIR/.todo/config" "$HOME/.todo/config"
+    [[ -f "$DOTFILES_DIR/.todo/config" ]] || ln -s "$DOTFILES_DIR/.todo/config" "$HOME/.todo/config"
 }
 
 function pullOrUpdateGitDependency() {

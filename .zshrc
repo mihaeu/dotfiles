@@ -1,3 +1,6 @@
+export GTK_CSD=0
+export LD_PRELOAD="$LD_PRELOAD:/usr/lib/x86_64-linux-gnu/libgtk3-nocsd.so.0"
+
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
@@ -17,7 +20,8 @@ ZSH_THEME="powerlevel9k/powerlevel9k"
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status battery time)
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
-POWERLEVEL9K_BATTERY_ICON=$'\u26A1'
+POWERLEVEL9K_COLOR_SCHEME='light'
+#POWERLEVEL9K_BATTERY_ICON=$'\u26A1'
 POWERLEVEL9K_MODE='nerdfont-complete'
 POWERLEVEL9K_STATUS_VERBOSE=false
 
@@ -42,6 +46,14 @@ function cleanTimesheet() {
     sed -r 's/\t/ /g' "$file" -i
     sed -r 's/ +/ /g' "$file" -i
     sed -r 's/ +$//g' "$file" -i
+}
+
+function tng() {
+    if [[ `ip tuntap show | wc -l` -eq 0 ]]; then 
+	nmcli con up id TNG
+    else 
+	nmcli con down id TNG
+    fi
 }
 
 # Uncomment the following line to use case-sensitive completion.
@@ -82,11 +94,7 @@ function cleanTimesheet() {
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-syntax-highlighting phing npm)
+plugins=(git zsh-syntax-highlighting phing npm vagrant colored-man-pages laravel)
 
 # User configuration
 
@@ -127,6 +135,12 @@ alias gs="git status"
 alias gc="git commit -v"
 alias standup="g lg | ag 'hours' --nocolor"
 alias lastweek="g lg | ag '(hours)|([1-7] days)' --nocolor"
+
+alias tngpull="nmcli con up id TNG && git pull && nmcli con down id TNG"
+alias tngpush="nmcli con up id TNG && git push && nmcli con down id TNG"
+
+alias tngup="nmcli con up id TNG"
+alias tngdown="nmcli con down id TNG"
 
 alias vi="nvim"
 alias tree="tree -C"
