@@ -34,7 +34,7 @@
     <!-- with Smart placement on a multi-monitor system, try to place new windows
        on: 'Any' - any monitor, 'Mouse' - where the mouse is, 'Active' - where
        the active window is, 'Primary' - only on the primary monitor -->
-    <primaryMonitor>1</primaryMonitor>
+    <primaryMonitor>Active</primaryMonitor>
     <!-- The monitor where Openbox should place popup dialogs such as the
        focus cycling popup, or the desktop switch popup.  It can be an index
        from 1, specifying a particular monitor.  Or it can be one of the
@@ -42,8 +42,9 @@
                   'Active' - where the active window is -->
   </placement>
   <theme>
-    <name>Clearlooks</name>
+    <name>Bear2</name>
     <titleLayout>NLIMC</titleLayout>
+    <!--<titleLayout>NLIMC</titleLayout>-->
     <!--
       available characters are NDSLIMC, each can occur at most once.
       N: window icon
@@ -54,8 +55,8 @@
       S: shade (roll up/down)
       D: omnipresent (on all desktops).
   -->
-    <keepBorder>yes</keepBorder>
-    <animateIconify>yes</animateIconify>
+    <keepBorder>no</keepBorder>
+    <animateIconify>no</animateIconify>
     <font place="ActiveWindow">
       <name>sans</name>
       <size>8</size>
@@ -178,7 +179,6 @@
   </dock>
   <keyboard>
     <chainQuitKey>C-g</chainQuitKey>
-    <!-- Keybindings for desktop switching -->
     <keybind key="W-d">
       <action name="ToggleShowDesktop"/>
     </keybind>
@@ -186,23 +186,16 @@
     <keybind key="A-F4">
       <action name="Close"/>
     </keybind>
-    <keybind key="A-Escape">
-      <action name="Lower"/>
-      <action name="FocusToBottom"/>
-      <action name="Unfocus"/>
-    </keybind>
     <keybind key="A-space">
       <action name="ShowMenu">
         <menu>client-menu</menu>
       </action>
     </keybind>
-    <!-- Take a screenshot of the current window with scrot when Alt+Print are pressed -->
     <keybind key="A-Print">
       <action name="Execute">
-        <command>shutter</command>
+        <command>scrot -s</command>
       </action>
     </keybind>
-    <!-- Keybindings for window switching -->
     <keybind key="A-Tab">
       <action name="NextWindow">
         <finalactions>
@@ -253,69 +246,139 @@
         <direction>down</direction>
       </action>
     </keybind>
-    <!-- Keybindings for running applications -->
-    <keybind key="W-e">
+    <!-- 
+	Custom keybindings 
+
+	Modifier keys	
+	S	Shift key
+	C	Control key
+	A	Alt key
+	W	Super key (Usually bound to the Windows key on keyboards which have one)
+	M	Meta key
+	H	Hyper key (If it is bound to something)
+	Down
+	Up
+	Left
+	Right
+	Print
+    -->
+    <keybind key="Print">
       <action name="Execute">
-        <startupnotify>
-          <enabled>true</enabled>
-          <name>File Manager</name>
-        </startupnotify>
+        <command>shutter</command>
+      </action>
+    </keybind>
+    <keybind key="W-Down">
+      <action name="Iconify"/>
+    </keybind>
+    <keybind key="W-Up">
+      <action name="ToggleMaximizeFull"/>
+    </keybind>
+    <keybind key="W-E">
+      <action name="Execute">
         <command>nautilus</command>
       </action>
     </keybind>
-    <!-- Launch scrot when Print is pressed -->
-    <keybind key="Print">
+    <keybind key="W-L">
       <action name="Execute">
-        <command>gnome-screenshot</command>
+        <command>xscreensaver-command --lock</command>
       </action>
     </keybind>
-    <keybind key="C-S-A-Left">
-      <action name="MoveResizeTo">
-        <monitor>1</monitor>
-      </action>
-    </keybind>
-    <keybind key="C-S-A-Right">
-      <action name="MoveResizeTo">
-        <monitor>2</monitor>
-      </action>
-    </keybind>
-    <!-- Custom  -->
-    <keybind key="W-d">
-      <action name="ToggleShowDesktop"/>
-    </keybind>
-    <keybind key="W-l">
+    <keybind key="W-S-A-C-L">
       <action name="Execute">
-        <command>/home/vagrant/scripts/logLockTime</command>
+        <command>openbox --exit</command>
       </action>
     </keybind>
-    <keybind key="W-Right">
-      <action name="DesktopRight">
-        <wrap>no</wrap>
+    <keybind key="C-A-T">
+      <action name="Execute">
+        <command>terminator -m -b</command>
+      </action>
+    </keybind>
+    <keybind key="A-F2">
+      <action name="Execute">
+        <command>gmrun</command>
+      </action>
+    </keybind>
+    <keybind key="C-A-Left">
+      <action name="UnmaximizeFull"/>
+      <action name="MaximizeVert"/>
+      <action name="MoveResizeTo">
+        <width>50%</width>
+      </action>
+      <action name="MoveToEdge">
+        <direction>west</direction>
       </action>
     </keybind>
     <keybind key="W-Left">
-      <action name="DesktopLeft">
-        <wrap>no</wrap>
+      <action name="MoveToEdge">
+        <direction>West</direction>
       </action>
     </keybind>
-    <keybind key="W-KP_8">
-      <action name="MoveResizeTo">
-        <y>0</y>
+    <keybind key="W-Right">
+      <action name="MoveToEdge">
+        <direction>East</direction>
       </action>
     </keybind>
-    <keybind key="W-KP_6">
+    <keybind key="C-A-Right">
+      <action name="UnmaximizeFull"/>
+      <action name="MaximizeVert"/>
       <action name="MoveResizeTo">
-        <x>-0</x>
+        <width>50%</width>
+      </action>
+      <action name="MoveToEdge">
+        <direction>east</direction>
       </action>
     </keybind>
-    <keybind key="W-KP_2">
+    <keybind key="C-A-Up">
+      <action name="UnmaximizeFull"/>
+      <!--<action name="MaximizeHorz"/>-->
       <action name="MoveResizeTo">
-        <y>-0</y>
+        <height>50%</height>
+      </action>
+      <action name="MoveToEdge">
+        <direction>north</direction>
       </action>
     </keybind>
-    <keybind key="W-KP_4">
+    <keybind key="C-A-Down">
+      <action name="UnmaximizeFull"/>
+      <!--<action name="MaximizeHorz"/>-->
       <action name="MoveResizeTo">
-        <x>0</x>
+        <height>50%</height>
+      </action>
+      <action name="MoveToEdge">
+        <direction>south</direction>
+      </action>
+    </keybind>
+    <keybind key="C-A-Return">
+      <action name="ToggleMaximize"/>
+    </keybind>
+    <keybind key="XF86AudioRaiseVolume">
+      <action name="Execute">
+        <command>amixer set Master 10%+</command>
+      </action>
+    </keybind>
+    <keybind key="XF86AudioLowerVolume">
+      <action name="Execute">
+        <command>amixer set Master 10%-</command>
+      </action>
+    </keybind>
+    <keybind key="XF86AudioMute">
+      <action name="Execute">
+        <command>amixer -D pulse set Master toggle</command>
+      </action>
+    </keybind>
+    <keybind key="XF86AudioPlay">
+      <action name="Execute">
+        <command>dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause</command>
+      </action>
+    </keybind>
+    <keybind key="XF86AudioPrev">
+      <action name="Execute">
+        <command>dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous</command>
+      </action>
+    </keybind>
+    <keybind key="XF86AudioNext">
+      <action name="Execute">
+        <command>dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next</command>
       </action>
     </keybind>
   </keyboard>
@@ -709,7 +772,7 @@
   # order that they appear in this list
 
 
-    # each rule element can be left out or set to 'default' to specify to not
+    # each rule element can be left out or set to 'default' to specify to not 
     # change that attribute of the window
 
     <decor>yes</decor>
@@ -775,5 +838,12 @@
 
   # end of the example
 -->
+    <application class="*">
+      <!--
+	<decor>no</decor>
+        <layer>normal</layer>
+	<focus>yes</focus>
+      -->
+    </application>
   </applications>
 </openbox_config>

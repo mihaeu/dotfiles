@@ -109,6 +109,12 @@ function ensurePatchedFontsAreInstalled() {
 
 
 function linkDotfiles() {
+    [[ -f "$HOME/.openbox" ]] && mv "$HOME/.openbox" "$HOME/.openbox_before_bootstrap"
+    ln -s "$DOTFILES_DIR/.openbox" "$HOME/.openbox"
+
+    [[ -f "$HOME/.tint2" ]] && mv "$HOME/.tint2" "$HOME/.tint2_before_bootstrap"
+    ln -s "$DOTFILES_DIR/.tint2" "$HOME/.tint2"
+
     [[ -f "$HOME/.zshrc" ]] && mv "$HOME/.zshrc" "$HOME/.zshrc_before_bootstrap"
     ln -s "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 
