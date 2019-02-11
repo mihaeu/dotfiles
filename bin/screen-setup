@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+readonly MONITORS=`xrandr | grep -c ' connected'`
+if [[ $MONITORS -eq 3 ]]; then
+    $HOME/.screenlayout/triple_2x_24_1_int.sh
+elif [[ $MONITORS -eq 2 ]]; then
+    $HOME/.screenlayout/default-with-external.sh
+else
+    $HOME/.screenlayout/default-one-screen.sh
+fi
+

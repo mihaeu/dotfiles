@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+declare -r layout=$(setxkbmap -query | ag layout | sed -r 's/layout: +//')
+if [[ "$layout" = 'us' ]]
+then
+    setxkbmap de
+else
+    setxkbmap us
+fi
+

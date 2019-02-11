@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -eux
+
+function main() {
+    nmcli con up id TNG
+    local -r TNG_SECRETS=$(keepassxc-cli show ~/Dropbox/Apps/KeePass/lastpass.kdbx 'TNG')
+    local -r TNG_LDAP_USERNAME=$(echo "$TNG_SECRECTS" | sed -r 's/UserName: //')
+    local -r TNG_LDAP_PASSWORD=$(echo "$TNG_SECRECTS" | sed -r 's/Password: //')
+    HTTPUSER="${TNG_LDAP_USERNAME}" HTTPPWD="${TNG_LDAP_PASSWORD}" $HOME/.gnupg/keysync.sh
+    nmcli con down id TNG
+}
+
+main
