@@ -22,6 +22,7 @@ background_color = #FFFFFF 4
 border_color = #FFFFFF 60
 
 # Panel
+panel_items = LTE:SBC
 panel_monitor = all
 panel_position = bottom center horizontal
 panel_size = 100% 36
@@ -50,7 +51,7 @@ urgent_nb_of_blink = 8
 task_icon = 1
 task_text = 1
 task_centered = 0
-task_maximum_size = 140 35
+#task_maximum_size = 140 35
 task_padding = 2 2
 task_background_id = 3
 task_active_background_id = 2
@@ -64,7 +65,7 @@ task_urgent_icon_asb = 100 0 0
 task_iconified_icon_asb = 70 0 0
 
 # Fonts
-task_font = Droid Naskh Shift Alt 9
+task_font = NotoMono Nerd Font 12
 task_font_color = #FFFFFF 60
 task_active_font_color = #FFFFFF 80
 task_urgent_font_color = #FFFFFF 80
@@ -115,5 +116,27 @@ bat2_font = sans 6
 battery_font_color = #FFFFFF 62
 battery_padding = 1 0
 battery_background_id = 0
+
+#-------------------------------------
+# Executor 1
+execp = new
+execp_command = ~/bin/tint2_vol.sh
+execp_interval = 5
+execp_has_icon = 0
+execp_cache_icon = 0
+execp_continuous = 0
+execp_markup = 1
+execp_lclick_command = pactl list sinks | grep -qi 'Mute: yes' && pactl set-sink-mute 0 0 || pactl set-sink-mute 0 1
+execp_rclick_command = pactl list sources | grep -A12 'Source #1' | grep -qi 'Mute: yes' && pactl set-source-mute 1 0 || pactl set-source-mute 1 1
+execp_mclick_command = pavucontrol
+execp_uwheel_command = amixer set Capture 2%+; amixer set Master 2%+
+execp_dwheel_command = amixer set Capture 2%-; amixer set Master 2%-
+execp_font = NotoMono Nerd Font 12
+execp_font_color = #000000 100
+execp_padding = 0 0
+execp_background_id = 0
+execp_centered = 1
+execp_icon_w = 0
+execp_icon_h = 0
 
 # End of config

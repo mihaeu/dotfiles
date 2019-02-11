@@ -3,7 +3,10 @@ setxkbmap -option grp:alt_shift_toggle us,de
 xscreensaver -nosplash &
 albert &
 $HOME/bin/screen-setup &
-feh --bg-scale ~/Pictures/d2.jpg
 tint2 ~/.config/tint2/tint2rc &
+$HOME/.dropbox-dist/dropboxd &
+nm-applet &
 terminator -b -m
-
+#feh --bg-scale ~/Pictures/d2.jpg
+amixer -c 0 set 'Headphone',0 playback 50%
+keepassxc &

@@ -381,6 +381,11 @@
         <command>dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next</command>
       </action>
     </keybind>
+    <keybind key="A-S">
+	<action name="Execute">
+	    <command>/home/mike/bin/toggle-keyboard-layout</command>
+	</action>
+    </keybind>
   </keyboard>
   <mouse>
     <dragThreshold>1</dragThreshold>

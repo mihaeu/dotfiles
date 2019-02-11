@@ -180,3 +180,6 @@ export NVM_DIR="$HOME/.nvm"
 
 source "$HOME/.php-version/php-version.sh"
 php-version 7
+
+# added by travis gem
+[ -f /home/mike/.travis/travis.sh ] && source /home/mike/.travis/travis.sh
