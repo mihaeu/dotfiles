@@ -118,6 +118,9 @@ function linkDotfiles() {
     do
         [[ ! -h "$config" ]] || ln -s "$config" "$HOME/.config"
     done
+
+    ln -sf "${DOTFILES_DIR}/bin" "${HOME}/bin"
+
     #[[ -f "$HOME/.openbox" ]] && mv "$HOME/.openbox" "$HOME/.openbox_before_bootstrap"
     #ln -sf "$DOTFILES_DIR/.openbox" "$HOME/.openbox"
 
