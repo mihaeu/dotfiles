@@ -1,6 +1,3 @@
-export GTK_CSD=0
-export LD_PRELOAD="$LD_PRELOAD:/usr/lib/x86_64-linux-gnu/libgtk3-nocsd.so.0"
-
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
@@ -99,10 +96,10 @@ plugins=(git zsh-syntax-highlighting phing npm vagrant colored-man-pages laravel
 # User configuration
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
-source ~/.nix-profile/etc/profile.d/nix.sh
+#source ~/.nix-profile/etc/profile.d/nix.sh
 source $ZSH/oh-my-zsh.sh
 
-source $HOME/.nix-profile/**/autojump.sh
+source /usr/share/autojump/autojump.sh
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -143,7 +140,7 @@ alias tngup="nmcli con up id TNG"
 alias tngdown="nmcli con down id TNG"
 
 alias vi="nvim"
-alias tree="tree -C"
+alias tree="exa --tree"
 alias le="exa -al"
 alias t="todo.sh"
 alias keysync="$HOME/.gnupg/keysync.sh"
@@ -178,8 +175,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-source "$HOME/.php-version/php-version.sh"
-php-version 7
-
 # added by travis gem
 [ -f /home/mike/.travis/travis.sh ] && source /home/mike/.travis/travis.sh
+
+# source "$HOME/.php-version/php-version.sh"
+# php-version 7
+

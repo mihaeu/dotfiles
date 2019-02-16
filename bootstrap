@@ -83,7 +83,7 @@ function ensureZshIsDefaultShell() {
     fi
     if ! grep $(whoami) /etc/passwd | grep zsh > /dev/null; then
         _info "Adding zsh to shells and set as default ..."
-        chsh -s "$(which zsh)"
+        sudo chsh -s "$(which zsh)"
     else
         _success "zsh is already the default"
     fi
@@ -92,7 +92,7 @@ function ensureZshIsDefaultShell() {
 function installOrUpdateOhMyZsh() {
       if [[ -d "$HOME/.oh-my-zsh/.git" ]]; then
         _info "Updating oh-my-zsh ..."
-        "$NIX_BIN/git" --git-dir="$HOME/.oh-my-zsh/.git" --work-tree="$HOME/.oh-my-zsh" pull
+        git --git-dir="$HOME/.oh-my-zsh/.git" --work-tree="$HOME/.oh-my-zsh" pull
       elif [[ -d "$HOME/.oh-my-zsh" ]]; then 
           _fail ".oh-my-zsh directory exists, but is not a git directory ..."
       else
@@ -103,26 +103,35 @@ function installOrUpdateOhMyZsh() {
 
 function ensurePatchedFontsAreInstalled() {
     _info "Installing patched fonts ..."
-    pullOrUpdateGitDependency "https://github.com/ryanoasis/nerd-fonts.git" "$HOME/.oh-my-zsh/custom/themes/patched-fonts"
-    "$HOME/.oh-my-zsh/custom/themes/patched-fonts/install.sh" || true
+    FONT_DIR="$HOME/.oh-my-zsh/custom/themes/patched-fonts"
+    if [[ ! -d "$FONT_DIR" ]]; then
+        git clone "https://github.com/ryanoasis/nerd-fonts.git" "$FONT_DIR"
+        "$HOME/.oh-my-zsh/custom/themes/patched-fonts/install.sh" || true
+    else
+        git --git-dir="$FONT_DIR/.git" pull
+    fi
 }
 
 
 function linkDotfiles() {
-    [[ -f "$HOME/.openbox" ]] && mv "$HOME/.openbox" "$HOME/.openbox_before_bootstrap"
-    ln -s "$DOTFILES_DIR/.openbox" "$HOME/.openbox"
+    for config in ${DOTFILES_DIR}/.config/*;
+    do
+        [[ ! -h "$config" ]] || ln -s "$config" "$HOME/.config"
+    done
+    #[[ -f "$HOME/.openbox" ]] && mv "$HOME/.openbox" "$HOME/.openbox_before_bootstrap"
+    #ln -sf "$DOTFILES_DIR/.openbox" "$HOME/.openbox"
 
-    [[ -f "$HOME/.tint2" ]] && mv "$HOME/.tint2" "$HOME/.tint2_before_bootstrap"
-    ln -s "$DOTFILES_DIR/.tint2" "$HOME/.tint2"
+    #[[ -f "$HOME/.tint2" ]] && mv "$HOME/.tint2" "$HOME/.tint2_before_bootstrap"
+    #ln -sf "$DOTFILES_DIR/.tint2" "$HOME/.tint2"
 
-    [[ -f "$HOME/.zshrc" ]] && mv "$HOME/.zshrc" "$HOME/.zshrc_before_bootstrap"
-    ln -s "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
+    #[[ -f "$HOME/.zshrc" ]] && mv "$HOME/.zshrc" "$HOME/.zshrc_before_bootstrap"
+    #ln -sf "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 
-    [[ -d "$HOME/.config/terminator" ]] || mkdir -p "$HOME/.config/terminator"
-    [[ -f "$DOTFILES_DIR/.config/terminator/config" ]] || ln -s "$DOTFILES_DIR/.config/terminator/config" "$HOME/.config/terminator/config"
+    #[[ -d "$HOME/.config/terminator" ]] || mkdir -p "$HOME/.config/terminator"
+    #[[ -f "$DOTFILES_DIR/.config/terminator/config" ]] || ln -sf "$DOTFILES_DIR/.config/terminator/config" "$HOME/.config/terminator/config"
 
-    [[ -d "$HOME/.todo/config" ]] || mkdir -p "$HOME/.todo"
-    [[ -f "$DOTFILES_DIR/.todo/config" ]] || ln -s "$DOTFILES_DIR/.todo/config" "$HOME/.todo/config"
+    #[[ -d "$HOME/.todo/config" ]] || mkdir -p "$HOME/.todo"
+    #[[ -f "$DOTFILES_DIR/.todo/config" ]] || ln -sf "$DOTFILES_DIR/.todo/config" "$HOME/.todo/config"
 }
 
 function pullOrUpdateGitDependency() {
@@ -157,22 +166,37 @@ function installOrUpdatePythonDependencies() {
     _error "installOrUpdatePythonDependencies not yet implemented"
 }
 
+function installOrUpdateRustDependencies() {
+    if ! type cargo >/dev/null; then
+       curl https://sh.rustup.rs -sSf | sh
+   fi
+
+   cargo install exa fd-find bat ripgrep
+}
+
 function installOrUpdateGoDependencies() {
     _error "installOrUpdateGoDependencies not yet implemented"
 }
 
+function installUbuntuDependencies() {
+    sudo apt update
+    sudo apt install -y $(cat $DOTFILES_DIR/ubuntu-dependencies | xargs)
+}
+
 function main() {
-    ensureNixIsInstalled
+#    ensureNixIsInstalled
+    installUbuntuDependencies
     ensureGitIsInstalled
     pullOrUpdateGitDependency "https://github.com/mihaeu/dotfiles" "$DOTFILES_DIR"
     cd "$DOTFILES_DIR"
-    installNixDependencies
+#    installNixDependencies
     ensureZshIsDefaultShell
     installOrUpdateOhMyZsh
     ensurePatchedFontsAreInstalled
     pullOrUpdateGitDependency "https://github.com/bhilburn/powerlevel9k" "$HOME/.oh-my-zsh/custom/themes/powerlevel9k"
     pullOrUpdateGitDependency "https://github.com/zsh-users/zsh-syntax-highlighting"  "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
     linkDotfiles
+    installOrUpdateRustDependencies
     installOrUpdateComposerDependencies
     installOrUpdatePhpDependencies
     installOrUpdateNodeDependencies
