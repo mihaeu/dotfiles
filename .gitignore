@@ -1,2 +1,6 @@
 .composer/*
 !.composer/composer*
+bin/pstorm
+bin/pycharm
+bin/idea
+bin/webstorm
