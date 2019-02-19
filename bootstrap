@@ -186,6 +186,14 @@ function installUbuntuDependencies() {
     sudo apt install -y $(cat $DOTFILES_DIR/ubuntu-dependencies | xargs)
 }
 
+function installMisc() {
+    # fzf
+    if ! type fzf >/dev/null; then
+	git clone --depth 1 https://github.com/junegunn/fzf.git "${HOME}/fzf"
+        ~/.fzf/install
+    fi
+}
+
 function main() {
 #    ensureNixIsInstalled
     installUbuntuDependencies
