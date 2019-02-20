@@ -25,3 +25,10 @@ p7zip-full
 arandr
 shutter
 
+php
+php-xml
+php-mbstring 
+php-xdebug
+php-gd
+php-zip 
+
