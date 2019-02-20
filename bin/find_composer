@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -eu
+
+if type composer >/dev/null 2>&1
+then
+    composer $@
+else
+    php composer.phar $@
+fi
+

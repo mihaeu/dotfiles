@@ -149,8 +149,8 @@ alias c=clear
 alias ccat='pygmentize -O style=monokai -f console256 -g'
 
 # php aliases
-alias coi="composer install"
-alias cou="composer update"
+alias coi="find_composer install"
+alias cou="find_composer update"
 alias p=phpunit
 alias pcov="phpunit --coverage-text --colors"
 
