@@ -10,4 +10,6 @@ terminator -b -m &
 nm-applet &
 keepassxc &
 /usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg & 
+chromium-browser &
+thunderbird &
 
