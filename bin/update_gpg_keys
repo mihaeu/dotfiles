@@ -5,10 +5,10 @@ set -eu
 function main() {
     nmcli con up id TNG > /tmp/update_gpg_keys_log 2>&1 || true
     echo -n 'Enter KeePassXC password to unlock password store: '
-    echo
     local -r TNG_SECRETS=$(keepassxc-cli show /home/mike/Dropbox/Apps/Keepass2Android/lastpass.kdbx 'TNG')
-    local -r TNG_LDAP_USERNAME=$(echo "$TNG_SECRETS" | head -n3 | tail -n1 | sed -r 's/UserName: //')
-    local -r TNG_LDAP_PASSWORD=$(echo "$TNG_SECRETS" | head -n4 | tail -n1 | sed -r 's/Password: //')
+    echo
+    local -r TNG_LDAP_USERNAME=$(echo "$TNG_SECRETS" | sed -r 's/UserName: // ; 3q;d')
+    local -r TNG_LDAP_PASSWORD=$(echo "$TNG_SECRETS" | sed -r 's/Password: // ; 4q;d')
     HTTPUSER="${TNG_LDAP_USERNAME}" HTTP_PASSWORD="${TNG_LDAP_PASSWORD}" "${HOME}/.gnupg/keysync.sh"
     nmcli con down id TNG
 }
