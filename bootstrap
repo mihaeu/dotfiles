@@ -120,21 +120,8 @@ function linkDotfiles() {
     done
 
     ln -sf "${DOTFILES_DIR}/bin" "${HOME}/bin"
-
-    #[[ -f "$HOME/.openbox" ]] && mv "$HOME/.openbox" "$HOME/.openbox_before_bootstrap"
-    #ln -sf "$DOTFILES_DIR/.openbox" "$HOME/.openbox"
-
-    #[[ -f "$HOME/.tint2" ]] && mv "$HOME/.tint2" "$HOME/.tint2_before_bootstrap"
-    #ln -sf "$DOTFILES_DIR/.tint2" "$HOME/.tint2"
-
-    #[[ -f "$HOME/.zshrc" ]] && mv "$HOME/.zshrc" "$HOME/.zshrc_before_bootstrap"
-    #ln -sf "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
-
-    #[[ -d "$HOME/.config/terminator" ]] || mkdir -p "$HOME/.config/terminator"
-    #[[ -f "$DOTFILES_DIR/.config/terminator/config" ]] || ln -sf "$DOTFILES_DIR/.config/terminator/config" "$HOME/.config/terminator/config"
-
-    #[[ -d "$HOME/.todo/config" ]] || mkdir -p "$HOME/.todo"
-    #[[ -f "$DOTFILES_DIR/.todo/config" ]] || ln -sf "$DOTFILES_DIR/.todo/config" "$HOME/.todo/config"
+    ln -sf "${DOTFILES_DIR}/.todo" "${HOME}"
+    ln -sf "${DOTFILES_DIR}/.zshrc" "${HOME}/.zshrc"
 }
 
 function pullOrUpdateGitDependency() {
@@ -158,7 +145,11 @@ function installOrUpdatePhpDependencies() {
 }
 
 function installOrUpdateNodeDependencies() {
-    _error "installOrUpdateNodeDependencies not yet implemented"
+    if ! type node >/dev/null; then
+        curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+	source "$HOME/.zshrc"
+	nvm install --lts
+    fi
 }
 
 function installOrUpdateRubyDependencies() {
