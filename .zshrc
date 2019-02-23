@@ -142,7 +142,7 @@ alias tngdown="nmcli con down id TNG"
 alias vi="nvim"
 alias tree="exa --tree"
 alias le="exa -al"
-alias t="todo.sh"
+alias t="todo-txt"
 alias keysync="$HOME/.gnupg/keysync.sh"
 
 alias c=clear
