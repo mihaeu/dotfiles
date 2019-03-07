@@ -47,9 +47,9 @@ function cleanTimesheet() {
 
 function tng() {
     if [[ `ip tuntap show | wc -l` -eq 0 ]]; then 
-	nmcli con up id TNG
+	nmcli con up id TNG 2>"/tmp/vpn.log"
     else 
-	nmcli con down id TNG
+	nmcli con down id TNG 2>"/tmp/vpn.log"
     fi
 }
 
