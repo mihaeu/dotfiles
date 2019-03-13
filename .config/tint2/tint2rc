@@ -22,7 +22,7 @@ background_color = #FFFFFF 4
 border_color = #FFFFFF 60
 
 # Panel
-panel_items = LTE:SBC
+panel_items = LT:SBE
 panel_monitor = all
 panel_position = bottom center horizontal
 panel_size = 100% 36
@@ -73,20 +73,23 @@ font_shadow = 0
 
 # Custom Executors
 # 1: Display current keyboard layout
-#execp = new
-#execp_command = echo Test
-#execp_interval = 1
-#execp_has_icon = 0
-#execp_cache_icon = 0
-#execp_continuous = 0
-#execp_markup = 1
-#execp_font = NotoMono Nerd Font 12
-#execp_font_color = #FFFFFF 100
-#execp_padding = 0 0
-#execp_background_id = 0
-#execp_centered = 1
-#execp_icon_w = 0
-#execp_icon_h = 0
+execp = new
+execp_command = php -r 'echo date("Y-m-d H:i");'
+execp_interval = 60
+execp_has_icon = 0
+execp_cache_icon = 0
+execp_continuous = 0
+execp_markup = 1
+execp_font = NotoMono Nerd Font 8
+execp_font_color = #FFFFFF 100
+execp_padding = 0 0
+execp_background_id = 0
+execp_centered = 1
+execp_icon_w = 0
+execp_icon_h = 0
+execp_lclick_command = lxqt-admin-time
+execp_rclick_command = lxqt-admin-time
+execp_mclick_command = lxqt-admin-time
 
 
 # System Tray
