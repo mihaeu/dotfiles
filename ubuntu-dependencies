@@ -27,6 +27,8 @@ shutter
 gimp
 libreoffice
 shellcheck
+jq
+pnmixer
 
 php
 php-xml

@@ -1,7 +1,6 @@
 compton &
 setxkbmap -option grp:alt_shift_toggle us,de
 xscreensaver -nosplash &
-#albert &
 $HOME/bin/screen-setup &
 $HOME/.dropbox-dist/dropboxd &
 amixer -c 1 set 'Headphone',0 playback 50% &
@@ -12,4 +11,6 @@ keepassxc &
 /usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg & 
 chromium-browser &
 thunderbird &
+spotify &
+pnmixer &
 
