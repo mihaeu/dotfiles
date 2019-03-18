@@ -163,10 +163,19 @@ function installOrUpdatePythonDependencies() {
 
 function installOrUpdateRustDependencies() {
     if ! type cargo >/dev/null; then
-       curl https://sh.rustup.rs -sSf | sh
-   fi
+        curl https://sh.rustup.rs -sSf | sh
+    fi
 
-   cargo install exa fd-find bat ripgrep
+    cargoInstall exa 
+    cargoInstall fd-find 
+    cargoInstall bat 
+    cargoInstall ripgrep
+}
+
+function cargoInstall() {
+    if ! type "$0" >/dev/null; then
+        cargo install "$0"
+    fi
 }
 
 function installOrUpdateGoDependencies() {
@@ -186,19 +195,33 @@ function installMisc() {
     fi
 }
 
+function cloneCompileAndInstallXkblayoutState() {
+    if type xkblayout-state >/dev/null; then
+	exit 0
+    fi
+
+    git clone "https://github.com/nonpop/xkblayout-state" /tmp/xkblayout-state
+    pushd $_
+    make
+    sudo make install
+    if ! type xkblayout-state >/dev/null; then
+        echo "Failed compiling xkblayout-state"
+        exit 3
+    fi
+}
+
 function main() {
-#    ensureNixIsInstalled
     installUbuntuDependencies
     ensureGitIsInstalled
     pullOrUpdateGitDependency "https://github.com/mihaeu/dotfiles" "$DOTFILES_DIR"
     cd "$DOTFILES_DIR"
-#    installNixDependencies
     ensureZshIsDefaultShell
     installOrUpdateOhMyZsh
     ensurePatchedFontsAreInstalled
     pullOrUpdateGitDependency "https://github.com/bhilburn/powerlevel9k" "$HOME/.oh-my-zsh/custom/themes/powerlevel9k"
     pullOrUpdateGitDependency "https://github.com/zsh-users/zsh-syntax-highlighting"  "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
     linkDotfiles
+    cloneCompileAndInstallXkblayoutState
     installOrUpdateRustDependencies
     installOrUpdateComposerDependencies
     installOrUpdatePhpDependencies

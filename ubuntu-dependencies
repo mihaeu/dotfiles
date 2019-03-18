@@ -29,6 +29,8 @@ libreoffice
 shellcheck
 jq
 pnmixer
+wmctrl
+xdotool
 
 php
 php-xml
