@@ -93,7 +93,7 @@ function installOrUpdateOhMyZsh() {
       if [[ -d "$HOME/.oh-my-zsh/.git" ]]; then
         _info "Updating oh-my-zsh ..."
         git --git-dir="$HOME/.oh-my-zsh/.git" --work-tree="$HOME/.oh-my-zsh" pull
-      elif [[ -d "$HOME/.oh-my-zsh" ]]; then 
+      elif [[ -d "$HOME/.oh-my-zsh" ]]; then
           _fail ".oh-my-zsh directory exists, but is not a git directory ..."
       else
          _info "Installing oh-my-zsh ..."
@@ -142,19 +142,28 @@ function installOrUpdateComposerDependencies() {
 }
 
 function installOrUpdatePhpDependencies() {
+    if ! type php >/dev/null; then
+        curl -L https://raw.githubusercontent.com/phpenv/phpenv-installer/master/bin/phpenv-installer | bash
+        local -r LATEST_VERSION="$(phpenv install --list | ag '^ +\d\.\d+\.\d+$' | tail -n1)"
+        phpenv install --ini development "${LATEST_VERSION}"
+    fi
     _error "installOrUpdatePhpDependencies not yet implemented"
 }
 
 function installOrUpdateNodeDependencies() {
     if ! type node >/dev/null; then
         curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-	source "$HOME/.zshrc"
-	nvm install --lts
+        source "$HOME/.zshrc"
+        nvm install --lts
     fi
 }
 
 function installOrUpdateRubyDependencies() {
-    _error "installOrUpdateRubyDependencies not yet implemented"
+    _if ! type ruby >/dev/null; then
+        curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-installer | bash
+        local -r LATEST_VERSION="$(rbenv install --list | ag '^ +\d\.\d+\.\d+$' | tail -n1)"
+        rbenv install -s "${LATEST_VERSION}"
+    fi
 }
 
 function installOrUpdatePythonDependencies() {
@@ -166,9 +175,9 @@ function installOrUpdateRustDependencies() {
         curl https://sh.rustup.rs -sSf | sh
     fi
 
-    cargoInstall exa 
-    cargoInstall fd-find 
-    cargoInstall bat 
+    cargoInstall exa
+    cargoInstall fd-find
+    cargoInstall bat
     cargoInstall ripgrep
 }
 

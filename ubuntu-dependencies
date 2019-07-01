@@ -31,11 +31,4 @@ jq
 pnmixer
 wmctrl
 xdotool
-
-php
-php-xml
-php-mbstring 
-php-xdebug
-php-gd
-php-zip 
-
+libbz2-dev

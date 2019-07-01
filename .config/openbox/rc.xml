@@ -248,12 +248,17 @@
     </keybind>
     <!-- 
 	Custom keybindings 
+    
+	Note: Openbox fails at interpreting combined keypressed, once single modifiers
+	      are defined here. Using xcape as a workaround to make single keys work with Openbox is one
+	      way of fixing this.
 
 	Modifier keys	
 	S	Shift key
 	C	Control key
 	A	Alt key
 	W	Super key (Usually bound to the Windows key on keyboards which have one)
+	        Super_L when used a single key
 	M	Meta key
 	H	Hyper key (If it is bound to something)
 	Down
@@ -261,6 +266,8 @@
 	Left
 	Right
 	Print
+    -->
+    <!--
     -->
     <keybind key="Print">
       <action name="Execute">
@@ -276,6 +283,11 @@
     <keybind key="W-E">
       <action name="Execute">
         <command>nautilus</command>
+      </action>
+    </keybind>
+    <keybind key="W-R">
+      <action name="Execute">
+        <command>jgmenu_run</command>
       </action>
     </keybind>
     <keybind key="W-L">
@@ -849,6 +861,9 @@
         <layer>normal</layer>
 	<focus>yes</focus>
       -->
+    </application>
+    <application class="Franz">
+      <maximized>true</maximized>
     </application>
   </applications>
 </openbox_config>

@@ -22,6 +22,13 @@ POWERLEVEL9K_COLOR_SCHEME='light'
 POWERLEVEL9K_MODE='nerdfont-complete'
 POWERLEVEL9K_STATUS_VERBOSE=false
 
+function clone() {
+    local -r REPO_URL="${1}"
+    local -r REPO_NAME="$(echo "${REPO_URL}" | sed -r 's/.+\///;s/\.git//')"
+    git clone "${REPO_URL}" "${REPO_NAME}"
+    cd $_
+}
+
 function mkcd() {
     local -r dir="$1"
     if [[ -z "$dir" || -d "$dir" ]]; then
@@ -31,25 +38,11 @@ function mkcd() {
     mkdir -p "$dir" && cd "$dir"
 }
 
-function cleanTimesheet() {
-    file="$1"
-    if [[ ! -e "$file"  ]]
-    then
-        echo "File does not exist."
-        return 1
-    fi
-
-    sed -r 's/^ +$//g' "$file" -i
-    sed -r 's/\t/ /g' "$file" -i
-    sed -r 's/ +/ /g' "$file" -i
-    sed -r 's/ +$//g' "$file" -i
-}
-
 function tng() {
-    if [[ `ip tuntap show | wc -l` -eq 0 ]]; then 
-	nmcli con up id TNG 2>"/tmp/vpn.log"
-    else 
-	nmcli con down id TNG 2>"/tmp/vpn.log"
+    if [[ `ip tuntap show | wc -l` -eq 0 ]]; then
+	nmcli con up id TNG >/tmp/vpn.log 2>&1
+    else
+	nmcli con down id TNG >/tmp/vpn.log 2>&1
     fi
 }
 
@@ -91,7 +84,15 @@ function tng() {
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
-plugins=(git zsh-syntax-highlighting phing npm vagrant colored-man-pages laravel)
+plugins=(
+    git
+    zsh-syntax-highlighting
+    phing
+    npm
+    vagrant
+    colored-man-pages
+    docker
+)
 
 # User configuration
 
@@ -167,7 +168,9 @@ alias xclip="xclip -selection c"
 alias xpaste="xclip -o"
 alias battery="upower -i /org/freedesktop/UPower/devices/battery_BAT0"
 
-export PATH=$PATH:$HOME/bin:$HOME/.local/bin:/usr/local/go/bin:$HOME/.composer/vendor/bin:$GOROOT/bin:$HOME/.yarn/bin:$HOME/.pyenv/bin:$HOME/.gem/ruby/2.4.0/bin/:$HOME/.cargo/bin
+alias bat="bat --theme=Monokai\ Extended\ Light"
+
+export PATH=$PATH:$HOME/bin:$HOME/.local/bin:/usr/local/go/bin:$HOME/.composer/vendor/bin:$GOROOT/bin:$HOME/.yarn/bin:$HOME/.cargo/bin:$HOME/.rbenv/bin
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -178,6 +181,14 @@ export NVM_DIR="$HOME/.nvm"
 # added by travis gem
 [ -f /home/mike/.travis/travis.sh ] && source /home/mike/.travis/travis.sh
 
-# source "$HOME/.php-version/php-version.sh"
-# php-version 7
+eval "$(rbenv init -)"
+# sets RBENV_VERSION to the latest version of ruby
+rbenv shell $(rbenv versions | tail -n1 | sed 's/*//')
+
+export PHPENV_ROOT="${HOME}/.phpenv"
+if [ -d "${PHPENV_ROOT}" ]; then
+    export PATH="${PHPENV_ROOT}/bin:${PATH}"
+    eval "$(phpenv init -)"
+    phpenv shell $(phpenv versions | tail -n1) >/dev/null 2>&1
+fi
 
