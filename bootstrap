@@ -159,7 +159,7 @@ function installOrUpdateNodeDependencies() {
 }
 
 function installOrUpdateRubyDependencies() {
-    _if ! type ruby >/dev/null; then
+    if ! type ruby >/dev/null; then
         curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-installer | bash
         local -r LATEST_VERSION="$(rbenv install --list | ag '^ +\d\.\d+\.\d+$' | tail -n1)"
         rbenv install -s "${LATEST_VERSION}"
