@@ -140,6 +140,8 @@ alias tngpush="nmcli con up id TNG && git push && nmcli con down id TNG"
 alias tngup="nmcli con up id TNG"
 alias tngdown="nmcli con down id TNG"
 
+alias wifi="nmcli d wifi list"
+
 alias vi="nvim"
 alias tree="exa --tree"
 alias le="exa -al"
