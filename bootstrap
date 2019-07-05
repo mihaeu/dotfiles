@@ -206,7 +206,7 @@ function installMisc() {
 
 function cloneCompileAndInstallXkblayoutState() {
     if type xkblayout-state >/dev/null; then
-	exit 0
+	    return
     fi
 
     git clone "https://github.com/nonpop/xkblayout-state" /tmp/xkblayout-state
