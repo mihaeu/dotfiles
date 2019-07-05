@@ -128,8 +128,6 @@ alias pcov="phpunit --coverage-text --colors"
 
 alias m=make
 
-alias server="ssh root@78.47.124.92"
-
 # folder aliases
 alias dl="cd $HOME/Downloads/"
 alias work="$HOME/workspace/"
