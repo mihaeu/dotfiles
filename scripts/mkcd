@@ -1,0 +1,9 @@
+source "$HOME/dotfiles/scripts/helpers"
+
+function mkcd() {
+    local -r dir="$1"
+    if [[ -z "$dir" || -d "$dir" ]]; then
+        _fail "Please provide a directory which doesn't already exist."
+    fi
+    mkdir -p "$dir" && cd "$dir"
+}

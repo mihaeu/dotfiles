@@ -1,0 +1,13 @@
+source "$HOME/dotfiles/scripts/helpers"
+
+function tng() {
+    if [[ `ip tuntap show 2>/dev/null | wc -l` -eq 0 ]]; then
+        _info "No active VPN connections, trying to connect ..."
+        nmcli con up id TNG >/tmp/vpn.log 2>&1
+        [[ $? = 0 ]] && _success "VPN connected ..." || _error "Connection failed ..."
+    else
+        _info "Active VPN connections, trying to disconnect ..."
+        nmcli con down id TNG >/tmp/vpn.log 2>&1
+        [[ $? = 0 ]] && _success "VPN disconnected ..." || _error "Couldn't disconnect all VPN connections (LAN?) ..."
+    fi
+}

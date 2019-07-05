@@ -1,0 +1,31 @@
+function _success() {
+    TEXT="$1"
+    GREEN="\033[0;32m"
+    _color_log "${GREEN}" "${TEXT}"
+}
+
+function _info() {
+    TEXT="$1"
+    ORANGE="\033[0;33m"
+    _color_log "${ORANGE}" "${TEXT}"
+}
+
+function _error() {
+    TEXT="$1"
+    RED="\033[0;31m"
+    _color_log "${RED}" "${TEXT}"
+}
+
+function _fail() {
+    TEXT="${1}"
+    EXIT_CODE="${2:-1}"
+    _fail "$TEXT"
+    exit "$EXIT_CODE"
+}
+
+function _color_log() {
+    COLOR="$1"
+    TEXT="$2"
+    NO_COLOR="\033[0m"
+    echo -e "${COLOR}${TEXT}${NO_COLOR}"
+}

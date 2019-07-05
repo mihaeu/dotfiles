@@ -22,30 +22,6 @@ POWERLEVEL9K_COLOR_SCHEME='light'
 POWERLEVEL9K_MODE='nerdfont-complete'
 POWERLEVEL9K_STATUS_VERBOSE=false
 
-function clone() {
-    local -r REPO_URL="${1}"
-    local -r REPO_NAME="$(echo "${REPO_URL}" | sed -r 's/.+\///;s/\.git//')"
-    git clone "${REPO_URL}" "${REPO_NAME}"
-    cd $_
-}
-
-function mkcd() {
-    local -r dir="$1"
-    if [[ -z "$dir" || -d "$dir" ]]; then
-        echo "Please provide a directory which doesn't already exist."
-        exit 1
-    fi
-    mkdir -p "$dir" && cd "$dir"
-}
-
-function tng() {
-    if [[ `ip tuntap show | wc -l` -eq 0 ]]; then
-	nmcli con up id TNG >/tmp/vpn.log 2>&1
-    else
-	nmcli con down id TNG >/tmp/vpn.log 2>&1
-    fi
-}
-
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 
@@ -97,7 +73,6 @@ plugins=(
 # User configuration
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
-#source ~/.nix-profile/etc/profile.d/nix.sh
 source $ZSH/oh-my-zsh.sh
 
 source /usr/share/autojump/autojump.sh
@@ -134,12 +109,6 @@ alias gc="git commit -v"
 alias standup="g lg | ag 'hours' --nocolor"
 alias lastweek="g lg | ag '(hours)|([1-7] days)' --nocolor"
 
-alias tngpull="nmcli con up id TNG && git pull && nmcli con down id TNG"
-alias tngpush="nmcli con up id TNG && git push && nmcli con down id TNG"
-
-alias tngup="nmcli con up id TNG"
-alias tngdown="nmcli con down id TNG"
-
 alias wifi="nmcli d wifi list"
 
 alias vi="nvim"
@@ -172,20 +141,28 @@ alias battery="upower -i /org/freedesktop/UPower/devices/battery_BAT0"
 
 alias bat="bat --theme=Monokai\ Extended\ Light"
 
+# functions
+source "$HOME/dotfiles/scripts/tng"
+source "$HOME/dotfiles/scripts/helpers"
+source "$HOME/dotfiles/scripts/clone"
+source "$HOME/dotfiles/scripts/mkcd"
+
 export PATH=$PATH:$HOME/bin:$HOME/.local/bin:/usr/local/go/bin:$HOME/.composer/vendor/bin:$GOROOT/bin:$HOME/.yarn/bin:$HOME/.cargo/bin:$HOME/.rbenv/bin
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # added by travis gem
 [ -f /home/mike/.travis/travis.sh ] && source /home/mike/.travis/travis.sh
 
-eval "$(rbenv init -)"
-# sets RBENV_VERSION to the latest version of ruby
-rbenv shell $(rbenv versions | tail -n1 | sed 's/*//')
+if [ type rbenv >/dev/null 2>&1 ]; then
+    eval "$(rbenv init -)"
+    # sets RBENV_VERSION to the latest version of ruby
+    rbenv shell $(rbenv versions | tail -n1 | sed 's/*//')
+fi
 
 export PHPENV_ROOT="${HOME}/.phpenv"
 if [ -d "${PHPENV_ROOT}" ]; then
@@ -193,4 +170,3 @@ if [ -d "${PHPENV_ROOT}" ]; then
     eval "$(phpenv init -)"
     phpenv shell $(phpenv versions | tail -n1) >/dev/null 2>&1
 fi
-

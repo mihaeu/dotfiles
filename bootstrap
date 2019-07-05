@@ -4,84 +4,15 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-NIX_BIN="$HOME/.nix-profile/bin"
 DOTFILES_DIR="$HOME/dotfiles"
-
-function _success() {
-    TEXT="$1"
-    GREEN="\033[0;32m"
-    _color_log "${GREEN}" "${TEXT}"
-}
-
-function _info() {
-    TEXT="$1"
-    ORANGE="\033[0;33m"
-    _color_log "${ORANGE}" "${TEXT}"
-}
-
-function _error() {
-    TEXT="$1"
-    RED="\033[0;31m"
-    _color_log "${RED}" "${TEXT}"
-}
-
-function _fail() {
-    TEXT="${1}"
-    _fail "$TEXT"
-    exit 1
-}
-
-function _color_log() {
-    COLOR="$1"
-    TEXT="$2"
-    NO_COLOR="\033[0m"
-    echo -e "${COLOR}${TEXT}${NO_COLOR}"
-}
-
-function ensureNixIsInstalled() {
-    _info "Checking if nix is installed ..."
-    if [[ ! -d "$HOME/.nix-profile" ]]; then
-        _info "Installing nix ..."
-        type "curl" > /dev/null || _fail "You don't have curl installed, aborting ..."
-    _info "Using curl ..."
-        curl https://nixos.org/nix/install | sh
-    else
-        _success "nix is already installed"
-    fi
-    source "$HOME/.nix-profile/etc/profile.d/nix.sh"
-}
-
-
-function ensureGitIsInstalled() {
-    _info "Checking if git is installed ..."
-    if ! type "git" > /dev/null; then
-        _info "Installing git ..."
-        nix-env -i git
-    else
-       _success "Git is already installed ..."
-    fi
-}
-
-function findMissingNixDependencies() {
-    echo $(diff <("$NIX_BIN/nix-env" -q | sed -r 's/\-[0-9\.]*$//g' | sort)  <(sed -r 's/\-[0-9\.]*$//' "$DOTFILES_DIR/nix-dependencies" | sort) | grep '> ' | sed -e 's/> //g')
-}
-
-function installNixDependencies() {
-    _info "Installing nix dependencies ..."
-    MISSING_DEPENDENCIES=$(findMissingNixDependencies)
-    if [[ ! -z "$MISSING_DEPENDENCIES" ]]; then
-        nix-env --install $MISSING_DEPENDENCIES
-    else
-        _success "Nothing to install ..."
-    fi
-}
+source "$DOTFILES_DIR/scripts/helpers"
 
 function ensureZshIsDefaultShell() {
     _info "Checking if zsh is the default shell ..."
     if ! grep zsh /etc/shells >/dev/null; then
         which zsh | sudo tee -a /etc/shells
     fi
-    if ! grep $(whoami) /etc/passwd | grep zsh > /dev/null; then
+    if ! grep "$(whoami)" /etc/passwd | grep zsh > /dev/null; then
         _info "Adding zsh to shells and set as default ..."
         sudo chsh -s "$(which zsh)"
     else
@@ -112,17 +43,25 @@ function ensurePatchedFontsAreInstalled() {
     fi
 }
 
+function linkBinaries() {
+    _info "Linking binaries ..."
+    mkdir -p "$HOME/bin"
+    for bin in ${DOTFILES_DIR}/bin/*
+    do
+        ln -sf "${bin}" "${HOME}/bin"
+    done
+}
 
 function linkDotfiles() {
+    _info "Linking dotfiles ..."
     for config in ${DOTFILES_DIR}/.config/*;
     do
-        [[ ! -h "$config" ]] || ln -s "$config" "$HOME/.config"
+        [[ ! -L "$config" ]] || ln -s "$config" "$HOME/.config"
     done
 
-    ln -sf "${DOTFILES_DIR}/bin" "${HOME}"
-    ln -sf "${DOTFILES_DIR}/.todo" "${HOME}"
-    ln -sf "${DOTFILES_DIR}/.zshrc" "${HOME}"
-    ln -sf "${DOTFILES_DIR}/.gitconfig" "${HOME}"
+    [[ -L "${DOTFILES_DIR}/.todo" ]] || ln -sf "${DOTFILES_DIR}/.todo" "${HOME}"
+    [[ -L "${DOTFILES_DIR}/.zshrc" ]] || ln -sf "${DOTFILES_DIR}/.zshrc" "${HOME}"
+    [[ -L "${DOTFILES_DIR}/.gitconfig" ]] || ln -sf "${DOTFILES_DIR}/.gitconfig" "${HOME}"
 }
 
 function pullOrUpdateGitDependency() {
@@ -142,23 +81,29 @@ function installOrUpdateComposerDependencies() {
 }
 
 function installOrUpdatePhpDependencies() {
+    _info "Installing PHP dependencies ..."
     if ! type php >/dev/null; then
         curl -L https://raw.githubusercontent.com/phpenv/phpenv-installer/master/bin/phpenv-installer | bash
         local -r LATEST_VERSION="$(phpenv install --list | ag '^ +\d\.\d+\.\d+$' | tail -n1)"
         phpenv install --ini development "${LATEST_VERSION}"
     fi
-    _error "installOrUpdatePhpDependencies not yet implemented"
+    installOrUpdateComposerDependencies
 }
 
 function installOrUpdateNodeDependencies() {
-    if ! type node >/dev/null; then
+    _info "Installing node dependencies ..."
+    if ! type node >/dev/null 2>&1; then
+        mkdir -p "$HOME/.nvm"
         curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
-        source "$HOME/.zshrc"
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
         nvm install --lts
     fi
 }
 
 function installOrUpdateRubyDependencies() {
+    _info "Installing ruby dependencies ..."
     if ! type ruby >/dev/null; then
         curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-installer | bash
         local -r LATEST_VERSION="$(rbenv install --list | ag '^ +\d\.\d+\.\d+$' | tail -n1)"
@@ -171,19 +116,22 @@ function installOrUpdatePythonDependencies() {
 }
 
 function installOrUpdateRustDependencies() {
+    _info "Installing rust dependencies ..."
     if ! type cargo >/dev/null; then
         curl https://sh.rustup.rs -sSf | sh
     fi
 
     cargoInstall exa
-    cargoInstall fd-find
+    cargoInstall fd-find fd
     cargoInstall bat
-    cargoInstall ripgrep
+    cargoInstall ripgrep rg
 }
 
 function cargoInstall() {
-    if ! type "$0" >/dev/null; then
-        cargo install "$0"
+    RUST_NAME=${1}
+    BINARY_NAME=${2:-$RUST_NAME}
+    if ! type "$BINARY_NAME" >/dev/null 2>&1; then
+        cargo install "$RUST_NAME" || true
     fi
 }
 
@@ -192,36 +140,45 @@ function installOrUpdateGoDependencies() {
 }
 
 function installUbuntuDependencies() {
+    _info "Installing/updating ubuntu dependencies ..."
     sudo apt update
-    sudo apt install -y $(cat $DOTFILES_DIR/ubuntu-dependencies | xargs)
+    sudo apt install -y $(cat $DOTFILES_DIR/ubuntu-dependencies | xargs) \
+        | grep -v "is already the newest version"
 }
 
 function installMisc() {
     # fzf
-    if ! type fzf >/dev/null; then
-	git clone --depth 1 https://github.com/junegunn/fzf.git "${HOME}/fzf"
+    if [[ ! -d "${HOME}/.fzf" ]]; then
+        git clone --depth 1 https://github.com/junegunn/fzf.git "${HOME}/.fzf"
         ~/.fzf/install
     fi
 }
 
 function cloneCompileAndInstallXkblayoutState() {
     if type xkblayout-state >/dev/null; then
-	    return
+        return
     fi
 
     git clone "https://github.com/nonpop/xkblayout-state" /tmp/xkblayout-state
-    pushd $_
+    pushd "$_"
     make
     sudo make install
     if ! type xkblayout-state >/dev/null; then
-        echo "Failed compiling xkblayout-state"
-        exit 3
+        _fail "Failed compiling xkblayout-state" 3
     fi
 }
 
 function main() {
+
+    _info '   _____  .__ __        /\         ________          __    _____.__.__                 '
+    _info '  /     \ |__|  | __ ___)/  ______ \______ \   _____/  |__/ ____\__|  |   ____   ______'
+    _info ' /  \ /  \|  |  |/ // __ \ /  ___/  |    |  \ /  _ \   __\   __\|  |  | _/ __ \ /  ___/'
+    _info '/    Y    \  |    <\  ___/ \___ \   |    `   (  <_> )  |  |  |  |  |  |_\  ___/ \___ \ '
+    _info '\____|__  /__|__|_ \\___  >____  > /_______  /\____/|__|  |__|  |__|____/\___  >____  >'
+    _info '        \/        \/    \/     \/          \/                                \/     \/ '
+    echo
+
     installUbuntuDependencies
-    ensureGitIsInstalled
     pullOrUpdateGitDependency "https://github.com/mihaeu/dotfiles" "$DOTFILES_DIR"
     cd "$DOTFILES_DIR"
     ensureZshIsDefaultShell
@@ -229,19 +186,20 @@ function main() {
     ensurePatchedFontsAreInstalled
     pullOrUpdateGitDependency "https://github.com/bhilburn/powerlevel9k" "$HOME/.oh-my-zsh/custom/themes/powerlevel9k"
     pullOrUpdateGitDependency "https://github.com/zsh-users/zsh-syntax-highlighting"  "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+    linkBinaries
     linkDotfiles
+    installMisc
     cloneCompileAndInstallXkblayoutState
     installOrUpdateRustDependencies
-    installOrUpdateComposerDependencies
     installOrUpdatePhpDependencies
     installOrUpdateNodeDependencies
     installOrUpdateRubyDependencies
     installOrUpdatePythonDependencies
     installOrUpdateGoDependencies
 
-    _success "=================================================="
-    _success "= All done, time to switch over to terminator    ="
-    _success "=================================================="
+    _success "==================================================="
+    _success "= All done, time to switch over to zsh/terminator ="
+    _success "==================================================="
 }
 
 main

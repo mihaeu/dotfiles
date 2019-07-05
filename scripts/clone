@@ -1,0 +1,5 @@
+function clone() {
+    local -r REPO_URL="${1}"
+    local -r REPO_NAME="$(echo "${REPO_URL}" | sed -r 's/.+\///;s/\.git//')"
+    git clone "${REPO_URL}" "${REPO_NAME}" && cd $_
+}
