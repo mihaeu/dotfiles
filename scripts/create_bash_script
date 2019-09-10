@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+#set -o xtrace
+
+function main {
+    readonly filename=${1:-}
+    if  [[ -z $filename  ]]; then
+        echo "Usage: $(basename $0) <filename>"
+	exit 1
+    fi
+
+    if [[ -e $filename ]]; then
+        echo "File $filename already exists."
+	exit 2
+    fi
+
+    echo '#!/usr/bin/env bash' >> "${filename}"
+    echo '' >> "${filename}"
+    echo 'set -o errexit' >> "${filename}"
+    echo 'set -o nounset' >> "${filename}"
+    echo 'set -o pipefail' >> "${filename}"
+    echo '#set -o xtrace' >> "${filename}"
+    echo '' >> "${filename}"
+    echo 'function main {' >> "${filename}"
+    echo '    readonly ARG="${1:-}"' >> "${filename}"
+    echo '}' >> "${filename}"
+    echo '' >> "${filename}"
+    echo 'main "$@"' >> "${filename}"
+
+    echo "Created file '${filename}' with +x and content:"
+    echo
+    chmod +x "$filename"
+    cat "$filename"
+}
+
+main "$@"
