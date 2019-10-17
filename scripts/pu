@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+#set -o xtrace
+
+function main {
+    readonly output="$(git push -u origin HEAD)"
+    if [[ $output =~ 'https:' ]]; then
+        google-chrome "$(echo "${output}" | grep 'https:' | sed -r 's/remote: +//')"
+    fi
+    echo "$output"
+}
+
+main "$@"

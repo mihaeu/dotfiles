@@ -19,22 +19,31 @@
   [[default]]
     background_color = "#fdf6e3"
     background_darkness = 0.8
+    background_image = None
     cursor_color = "#333333"
     cursor_color_fg = False
-    font = NotoMono Nerd Font 12
+    font = NotoMono Nerd Font 20
     foreground_color = "#657b83"
     palette = "#073642:#dc322f:#859900:#b58900:#268bd2:#d33682:#2aa198:#eee8d5:#002b36:#cb4b16:#586e75:#657b83:#839496:#6c71c4:#93a1a1:#fdf6e3"
     scrollback_infinite = True
     scrollbar_position = hidden
     show_titlebar = False
     use_system_font = False
-  [[presentation]]
-    background_color = "#000000"
-    scrollbar_position = hidden
+  [[dark]]
+    background_darkness = 0.9
+    background_image = None
     cursor_color = "#aaaaaa"
-    font = FuraCode Nerd Font Mono 10
-    foreground_color = "#CCCCCC"
+    font = DejaVuSansMono Nerd Font Mono 20
+    foreground_color = "#ffffff"
     palette = "#073642:#dc322f:#859900:#b58900:#268bd2:#d33682:#2aa198:#eee8d5:#002b36:#cb4b16:#586e75:#657b83:#839496:#6c71c4:#93a1a1:#fdf6e3"
     show_titlebar = False
     use_system_font = False
-    size = 600, 400
+  [[presentation]]
+    background_image = None
+    cursor_color = "#aaaaaa"
+    font = FuraCode Nerd Font Mono 10
+    foreground_color = "#cccccc"
+    palette = "#073642:#dc322f:#859900:#b58900:#268bd2:#d33682:#2aa198:#eee8d5:#002b36:#cb4b16:#586e75:#657b83:#839496:#6c71c4:#93a1a1:#fdf6e3"
+    scrollbar_position = hidden
+    show_titlebar = False
+    use_system_font = False

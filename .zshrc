@@ -17,10 +17,13 @@ ZSH_THEME="powerlevel9k/powerlevel9k"
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status battery time)
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
-POWERLEVEL9K_COLOR_SCHEME='light'
+POWERLEVEL9K_COLOR_SCHEME='dark'
 #POWERLEVEL9K_BATTERY_ICON=$'\u26A1'
 POWERLEVEL9K_MODE='nerdfont-complete'
 POWERLEVEL9K_STATUS_VERBOSE=false
+POWERLEVEL9K_SHORTEN_STRATEGY=truncate_from_right
+POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
+DEFAULT_USER=mike
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -168,3 +171,4 @@ if [ -d "${PHPENV_ROOT}" ]; then
     eval "$(phpenv init -)"
     phpenv shell $(phpenv versions | tail -n1) >/dev/null 2>&1
 fi
+

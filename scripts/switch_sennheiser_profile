@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+#set -o xtrace
+
+function main {
+	readonly sennheiser_profile="$(pactl list | grep 'MB 660 MS' -C10)"
+	readonly pactl_name="$(echo $sennheiser_profile | grep 'MB 660 MS' -C10 | ag 'Name: ' | tail -n1 | sed -r 's/.*Name://')"
+	readonly pactl_profile="$(echo $sennheiser_profile | ag 'Active Profile' | sed -r 's/.*: *//')"
+
+	echo $sennheiser_profile #$pactl_name #$pactl_profile
+
+}
+
+main "$@"
