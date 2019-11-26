@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o xtrace
+
+function main {
+    readonly PRETTIER_CONFIG="${1:-prettier.config.js}"
+    git diff --name-only | xargs -I{} yarn prettier --write --config "${PRETTIER_CONFIG}" {}
+}
+
+main "$@"

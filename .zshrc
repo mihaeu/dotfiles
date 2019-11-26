@@ -71,6 +71,10 @@ plugins=(
     vagrant
     colored-man-pages
     docker
+    yarn
+    npm
+    mvn
+    zsh-autosuggestions
 )
 
 # User configuration
@@ -172,3 +176,17 @@ if [ -d "${PHPENV_ROOT}" ]; then
     phpenv shell $(phpenv versions | tail -n1) >/dev/null 2>&1
 fi
 
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/home/mike/.sdkman"
+[[ -s "/home/mike/.sdkman/bin/sdkman-init.sh" ]] && source "/home/mike/.sdkman/bin/sdkman-init.sh"
+
+# tabtab source for serverless package
+# uninstall by removing these lines or running `tabtab uninstall serverless`
+[[ -f /home/mike/workspace/mercateo/unite-graphql/node_modules/tabtab/.completions/serverless.zsh ]] && . /home/mike/workspace/mercateo/unite-graphql/node_modules/tabtab/.completions/serverless.zsh
+# tabtab source for sls package
+# uninstall by removing these lines or running `tabtab uninstall sls`
+[[ -f /home/mike/workspace/mercateo/unite-graphql/node_modules/tabtab/.completions/sls.zsh ]] && . /home/mike/workspace/mercateo/unite-graphql/node_modules/tabtab/.completions/sls.zsh
+# tabtab source for slss package
+# uninstall by removing these lines or running `tabtab uninstall slss`
+[[ -f /home/mike/workspace/mercateo/unite-graphql/node_modules/tabtab/.completions/slss.zsh ]] && . /home/mike/workspace/mercateo/unite-graphql/node_modules/tabtab/.completions/slss.zsh

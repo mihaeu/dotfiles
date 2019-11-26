@@ -50,6 +50,7 @@ function linkBinaries() {
     do
         ln -sf "${bin}" "${HOME}/bin"
     done
+    ln -sf "${DOTFILES_DIR}/scripts/*(.)" $HOME/bin
 }
 
 function linkDotfiles() {

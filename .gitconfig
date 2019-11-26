@@ -7,5 +7,6 @@
 [core]
 	editor = nvim
 	autocrlf = input
+	excludesFile = /home/mike/dotfiles/.global.gitignore
 [commit]
-	gpgsign = false
+	gpgsign = true

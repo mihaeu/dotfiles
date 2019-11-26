@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+#set -o xtrace
+
+# fixup
+#
+# Fix up the last commit of the given file
+#
+# @see https://confluence.tngtech.com/display/~baerntha/2019/10/11/git+fixup+und+autosquash
+function main {
+    local -r file="${1:-}"
+    if [[ -z $file ]];
+    then
+	echo "Usage: fixup <file>"
+	exit 1
+    fi
+    set -e
+    local -r commit=$( git rev-list -1 HEAD -- "${file}" )
+    echo "${file} was last changed in ${commit}"
+    git commit --fixup "${commit}" -- "${file}"
+    git rebase -i --autosquash "${commit}~1"
+}
+
+main "$@"
