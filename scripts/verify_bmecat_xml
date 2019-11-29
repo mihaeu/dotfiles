@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+#set -o xtrace
+
+function main {
+    readonly XML_FILE="${1:-}"
+    xmllint --schema /home/mike/workspace/mercateo/bsp-file-processor/src/main/resources/xsd/bmecat12/bmecat_new_catalog_1_2.xsd "${XML_FILE}" --noout
+}
+
+main "$@"
