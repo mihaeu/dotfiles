@@ -11,11 +11,12 @@ function main {
   readonly pactl_active_profile="$(echo $sennheiser_profile | grep -oP 'Active Profile: ([^ ]+)' | sed -r 's/.*: *//')"
   readonly pactl_other_profile="$(echo $sennheiser_profile | grep -oP 'profile.s.: .+' | sed -r 's/.*: *//;s/, //' | sed -r "s/${pactl_active_profile}//")"
   
-  echo name: $pactl_name
-  echo active: $pactl_active_profile
-  echo other: $pactl_other_profile
+  # echo name: $pactl_name
+  # echo active: $pactl_active_profile
+  # echo other: $pactl_other_profile
 
   pactl set-card-profile "${pactl_name}" "${pactl_other_profile}"
+  [[ $pactl_other_profile = "a2dp_sink" ]] && echo "🎧" || echo "🎙️"
 }
 
 main "$@"
