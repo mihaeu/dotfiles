@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+#set -o xtrace
+
+function main {
+    local -r stage="${1:-}"
+    if [[ -z ${stage} ]]; then
+	echo 'Usage: afp <stage>'
+        exit 1;
+    fi
+    local -r user="${2:-readonly}"
+
+    echo -n 'Enter KeePassXC password: '
+    local -r password="$(keepassxc-cli show /home/mike/Dropbox/Apps/Keepass2Android/lastpass.kdbx 'Mercateo Account' 2>/dev/null | grep 'Password: ' | cut -d' ' -f2)"
+    
+    local -r aws_credentials=$(curl --silent -u"michael.haeuslmann:${password}" "https://afp.intern.mercateo.com/afp-api/latest/account/${stage}/${user}/credentials")
+
+    echo "export AWS_ACCESS_KEY_ID=$(echo ${aws_credentials} | jq '.AccessKeyId')"
+    echo "export AWS_SECRET_ACCESS_KEY=$(echo ${aws_credentials} | jq '.SecretAccessKey')"
+    echo "export AWS_SESSION_TOKEN=$(echo ${aws_credentials} | jq '.Token')"
+    echo 'export AWS_SECURITY_TOKEN=${AWS_SESSION_TOKEN}'
+}
+
+main "$@"
