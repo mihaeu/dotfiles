@@ -22,7 +22,7 @@ background_color = #FFFFFF 15
 border_color = #FFFFFF 60
 
 # Panel
-panel_items = PLTSEEC
+panel_items = PLTSEEEC
 panel_monitor = all
 panel_position = bottom center horizontal
 panel_size = 100% 24
@@ -85,7 +85,24 @@ button_lclick_command = jgmenu_run
 # Keyboard Layout
 execp = new
 execp_command = xkblayout-state print "%s" | awk '{ print toupper($0) }'
-execp_interval = 1
+execp_interval = 5
+execp_has_icon = 0
+execp_cache_icon = 0
+execp_continuous = 0
+execp_markup = 1
+execp_font = NotoMono Nerd Font 10
+execp_font_color = #999999 100
+execp_padding = 0 0
+execp_background_id = 0
+execp_centered = 1
+execp_icon_w = 0
+execp_icon_h = 0
+
+# Sennheiser Icon and Toggle
+execp = new
+execp_command = show_sennheiser_profile
+execp_rclick_command = switch_sennheiser_profile
+execp_interval = 5
 execp_has_icon = 0
 execp_cache_icon = 0
 execp_continuous = 0

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+#set -o xtrace
+
+function main {
+  readonly sennheiser_profile="$(pactl list cards | grep 'MB 660 MS' -C10)"
+  readonly pactl_active_profile="$(echo $sennheiser_profile | grep -oP 'Active Profile: ([^ ]+)' | sed -r 's/.*: *//')"
+
+  [[ $pactl_active_profile = "a2dp_sink" ]] && echo "🎧" || echo "🎙️"
+}
+
+main "$@"
+
