@@ -85,6 +85,9 @@ button_lclick_command = jgmenu_run
 # Keyboard Layout
 execp = new
 execp_command = xkblayout-state print "%s" | awk '{ print toupper($0) }'
+button_lclick_command = toggle-keyboard-layout
+button_mclick_command = toggle-keyboard-layout
+button_rclick_command = toggle-keyboard-layout
 execp_interval = 5
 execp_has_icon = 0
 execp_cache_icon = 0
@@ -146,7 +149,7 @@ clock_font_color = #999999 100
 clock_tooltip = %a %B %Y
 clock_padding = 10 0
 clock_background_id = 0
-clock_lclick_command = chromium-browser "https://calendar.google.com/"
+clock_lclick_command = google-chrome "https://calendar.google.com/"
 clock_rclick_command = lxqt-admin-time
 clock_mclick_command = lxqt-admin-time
 
