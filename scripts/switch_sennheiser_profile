@@ -6,7 +6,7 @@ set -o pipefail
 #set -o xtrace
 
 function main {
-  readonly sennheiser_profile="$(pactl list cards | grep 'MB 660 MS' -C10)"
+  readonly sennheiser_profile="$(pactl list cards | grep 'MB 660' -C10)"
   readonly pactl_name="$(echo $sennheiser_profile | grep 'Name: ' | tail -n1 | sed -r 's/.*Name://' | cut -d' ' -f2)"
   readonly pactl_active_profile="$(echo $sennheiser_profile | grep -oP 'Active Profile: ([^ ]+)' | sed -r 's/.*: *//')"
   readonly pactl_other_profile="$(echo $sennheiser_profile | grep -oP 'profile.s.: .+' | sed -r 's/.*: *//;s/, //' | sed -r "s/${pactl_active_profile}//")"

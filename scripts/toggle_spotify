@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+#set -o xtrace
+
+function spotify_playing() {  
+    readonly spotify_status="$(dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'PlaybackStatus')"
+    [[ $spotify_status =~ "Playing" ]] && echo "1" || echo 0
+}
+
+function sennheiser_profile {
+  readonly sennheiser_profile="$(pactl list cards | grep 'MB 660 MS' -C10)"
+  readonly pactl_active_profile="$(echo $sennheiser_profile | grep -oP 'Active Profile: ([^ ]+)' | sed -r 's/.*: *//')"
+
+  [[ $pactl_active_profile = "a2dp_sink" ]] && echo "🎧" || echo "🎙️"
+}
+
+function toggle_sennheiser_profile {
+  readonly sennheiser_profile="$(pactl list cards | grep 'MB 660' -C10)"
+  readonly pactl_name="$(echo $sennheiser_profile | grep 'Name: ' | tail -n1 | sed -r 's/.*Name://' | cut -d' ' -f2)"
+  readonly pactl_active_profile="$(echo $sennheiser_profile | grep -oP 'Active Profile: ([^ ]+)' | sed -r 's/.*: *//')"
+  readonly pactl_other_profile="$(echo $sennheiser_profile | grep -oP 'profile.s.: .+' | sed -r 's/.*: *//;s/, //' | sed -r "s/${pactl_active_profile}//")"
+
+  pactl set-card-profile "${pactl_name}" "${pactl_other_profile}"
+  [[ $pactl_other_profile = "a2dp_sink" ]] && echo "🎧" || echo "🎙️"
+}
+
+function main {
+    readonly profile="$(sennheiser_profile)"
+    readonly playing="$(spotify_playing)"
+    if [[ $playing == "1" ]];
+    then
+        [[ $profile == "🎧" ]] && toggle_sennheiser_profile >/dev/null
+        dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Pause >/dev/null
+    else
+        [[ $profile == "🎙️" ]] && toggle_sennheiser_profile >/dev/null
+        dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Play >/dev/null
+    fi
+}
+
+main "$@"
