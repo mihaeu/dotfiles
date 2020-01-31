@@ -5,9 +5,12 @@ set -o nounset
 set -o pipefail
 #set -o xtrace
 
+readonly TRUE=1
+readonly FALSE=0
+
 function spotify_playing() {  
     readonly spotify_status="$(dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'PlaybackStatus')"
-    [[ $spotify_status =~ "Playing" ]] && echo "1" || echo 0
+    [[ $spotify_status =~ "Playing" ]] && echo $TRUE || echo $FALSE
 }
 
 function sennheiser_profile {
@@ -30,7 +33,7 @@ function toggle_sennheiser_profile {
 function main {
     readonly profile="$(sennheiser_profile)"
     readonly playing="$(spotify_playing)"
-    if [[ $playing == "1" ]];
+    if [[ $playing == $TRUE ]];
     then
         [[ $profile == "🎧" ]] && toggle_sennheiser_profile >/dev/null
         dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Pause >/dev/null
