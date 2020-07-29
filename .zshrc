@@ -15,9 +15,12 @@ export ZSH="$HOME/.oh-my-zsh"
 export TERM="xterm-256color"
 ZSH_THEME="powerlevel9k/powerlevel9k"
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
+POWERLEVEL9K_VCS_SHORTEN_LENGTH=30
+POWERLEVEL9K_VCS_SHORTEN_MIN_LENGTH=10
+POWERLEVEL9K_VCS_SHORTEN_STRATEGY="truncate_from_right"
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status battery time)
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
-POWERLEVEL9K_COLOR_SCHEME='dark'
+#POWERLEVEL9K_COLOR_SCHEME='dark'
 #POWERLEVEL9K_BATTERY_ICON=$'\u26A1'
 POWERLEVEL9K_MODE='nerdfont-complete'
 POWERLEVEL9K_STATUS_VERBOSE=false
@@ -84,6 +87,10 @@ source $ZSH/oh-my-zsh.sh
 
 source /usr/share/autojump/autojump.sh
 
+function current-branch() {
+   git branch | grep '*' | cut -d' ' -f2 | xclip
+}
+
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
@@ -112,6 +119,7 @@ source /usr/share/autojump/autojump.sh
 # git aliases
 alias g=git
 alias gs="git status"
+alias gf="git fuzzy"
 alias gc="git commit -v"
 alias standup="g lg | ag 'hours' --nocolor"
 alias lastweek="g lg | ag '(hours)|([1-7] days)' --nocolor"
@@ -152,11 +160,32 @@ source "$HOME/dotfiles/scripts/helpers"
 source "$HOME/dotfiles/scripts/clone"
 source "$HOME/dotfiles/scripts/mkcd"
 
-export PATH=$PATH:$HOME/bin:$HOME/.local/bin:/usr/local/go/bin:$HOME/.composer/vendor/bin:$GOROOT/bin:$HOME/.yarn/bin:$HOME/.cargo/bin:$HOME/.rbenv/bin
+export PATH=$PATH:$HOME/bin:$HOME/.local/bin:/usr/local/go/bin:$HOME/.composer/vendor/bin:$GOROOT/bin:$HOME/.yarn/bin:$HOME/.cargo/bin:$HOME/.rbenv/bin:$HOME/opt/git-fuzzy/bin
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+autoload -U add-zsh-hook
+load-nvmrc() {
+  local node_version="$(nvm version)"
+  local nvmrc_path="$(nvm_find_nvmrc)"
+
+  if [ -n "$nvmrc_path" ]; then
+    local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+
+    if [ "$nvmrc_node_version" = "N/A" ]; then
+      nvm install
+    elif [ "$nvmrc_node_version" != "$node_version" ]; then
+      nvm use
+    fi
+  elif [ "$node_version" != "$(nvm version default)" ]; then
+    echo "Reverting to nvm default version"
+    nvm use default
+  fi
+}
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -190,3 +219,6 @@ export SDKMAN_DIR="/home/mike/.sdkman"
 # tabtab source for slss package
 # uninstall by removing these lines or running `tabtab uninstall slss`
 [[ -f /home/mike/workspace/mercateo/unite-graphql/node_modules/tabtab/.completions/slss.zsh ]] && . /home/mike/workspace/mercateo/unite-graphql/node_modules/tabtab/.completions/slss.zsh
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /home/mike/opt/terraform terraform

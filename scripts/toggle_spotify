@@ -7,6 +7,8 @@ set -o pipefail
 
 readonly TRUE=1
 readonly FALSE=0
+readonly MIC_ON="🎙️"
+readonly MIC_OFF="🎧"
 
 function spotify_playing() {  
     readonly spotify_status="$(dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'PlaybackStatus')"
@@ -17,7 +19,7 @@ function sennheiser_profile {
   readonly sennheiser_profile="$(pactl list cards | grep 'MB 660 MS' -C10)"
   readonly pactl_active_profile="$(echo $sennheiser_profile | grep -oP 'Active Profile: ([^ ]+)' | sed -r 's/.*: *//')"
 
-  [[ $pactl_active_profile = "a2dp_sink" ]] && echo "🎧" || echo "🎙️"
+  [[ $pactl_active_profile = "a2dp_sink" ]] && echo "$MIC_OFF" || echo "$MIC_ON"
 }
 
 function toggle_sennheiser_profile {
@@ -27,7 +29,6 @@ function toggle_sennheiser_profile {
   readonly pactl_other_profile="$(echo $sennheiser_profile | grep -oP 'profile.s.: .+' | sed -r 's/.*: *//;s/, //' | sed -r "s/${pactl_active_profile}//")"
 
   pactl set-card-profile "${pactl_name}" "${pactl_other_profile}"
-  [[ $pactl_other_profile = "a2dp_sink" ]] && echo "🎧" || echo "🎙️"
 }
 
 function main {
@@ -35,10 +36,10 @@ function main {
     readonly playing="$(spotify_playing)"
     if [[ $playing == $TRUE ]];
     then
-        [[ $profile == "🎧" ]] && toggle_sennheiser_profile >/dev/null
+        [[ $profile == "$MIC_OFF" ]] && toggle_sennheiser_profile
         dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Pause >/dev/null
     else
-        [[ $profile == "🎙️" ]] && toggle_sennheiser_profile >/dev/null
+        [[ $profile == "$MIC_ON" ]] && toggle_sennheiser_profile
         dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Play >/dev/null
     fi
 }
