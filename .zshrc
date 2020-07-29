@@ -117,6 +117,9 @@ function current-branch() {
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # git aliases
+alias woman=man
+alias person=man
+alias human=man
 alias g=git
 alias gs="git status"
 alias gf="git fuzzy"
