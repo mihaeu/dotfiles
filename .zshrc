@@ -88,9 +88,12 @@ source $ZSH/oh-my-zsh.sh
 source /usr/share/autojump/autojump.sh
 
 function current-branch() {
-   git branch | grep '*' | cut -d' ' -f2 | xclip
+    git branch | grep '*' | cut -d' ' -f2 | xclip
 }
 
+function gch() {
+    git checkout "$(git branch --all | fzf | tr -d '[:space:]*')"
+}
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
@@ -225,3 +228,4 @@ export SDKMAN_DIR="/home/mike/.sdkman"
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /home/mike/opt/terraform terraform
+

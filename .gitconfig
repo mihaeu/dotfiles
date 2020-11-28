@@ -1,6 +1,7 @@
 [user]
 	email = michael.haeuslmann@gmail.com
 	name = Michael Haeuslmann
+	signingkey = 44CC65DC01D2FC05AD6F3DBD76835C9464877BDD
 [alias]
 	co = checkout
 	pu = push -u origin HEAD
@@ -11,3 +12,5 @@
 	excludesFile = /home/mike/dotfiles/.global.gitignore
 [commit]
 	gpgsign = true
+[gpg]
+	program = gpg2

@@ -14,7 +14,7 @@ function main {
     local -r user="${2:-readonly}"
 
     echo -n 'Enter KeePassXC password: '
-    local -r password="$(keepassxc-cli show /home/mike/Dropbox/Apps/Keepass2Android/lastpass.kdbx 'Mercateo Account' 2>/dev/null | grep 'Password: ' | cut -d' ' -f2)"
+    local -r password="$(snap run keepassxc.cli show -s /home/mike/Dropbox/Apps/Keepass2Android/lastpass.kdbx 'Mercateo Account' 2>/dev/null | grep 'Password: ' | cut -d' ' -f2)"
     
     local -r aws_credentials=$(curl --silent -u"michael.haeuslmann:${password}" "https://afp.intern.mercateo.com/afp-api/latest/account/${stage}/${user}/credentials")
 
